@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include "Gate.h"
+#include "../include/Gate.h"
 
 using std::cout;
 using std::endl;

@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef GATE_H
+#define GATE_H
 
 #include "Operator.h"
 
@@ -34,4 +35,6 @@ public:
 
 	~Gate2Q();
 };
+
+#endif // GATE_H
 

@@ -5,7 +5,7 @@
 #include <chrono>
 #include <algorithm>
 #include <functional>
-#include "Operator.h"
+#include "../include/Operator.h"
 
 using std::cout;
 using std::endl;

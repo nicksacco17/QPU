@@ -3,9 +3,9 @@
 #include <ctime>
 #include <cmath>	
 
-#include "State.h"
-#include "Operator.h"
-#include "LinearAlgebra.h"
+#include "../include/State.h"
+#include "../include/Operator.h"
+#include "../include/LinearAlgebra.h"
 
 using std::cout;
 using std::endl;

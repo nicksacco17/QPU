@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include "Pauli_Matrix.h"
+#include "../include/Pauli_Matrix.h"
 
 using std::cout;
 using std::endl;

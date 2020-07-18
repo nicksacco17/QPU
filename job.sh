@@ -7,26 +7,10 @@
 #SBATCH --gres=gpu:volta:1
 #SBATCH -t 04:00:00 # 1 hour
 
-for ((q=2; q<=30; q++))
+# q == number of qubits in system (2 --> 20)
+for ((q=2; q<=20; q++))
 do
 	nvidia-smi
-	./qpu $((2**q))
+	./qpu $q
 	sleep 1
 done
-
-#nvidia-smi
-#./qpu
-
-#for i in 1 2
-#do
-#	for j in 2048 4096 8192 16384
-#	do
-#		echo "----------ITERATION $i ---------- DIMENSION ($j x $j) ----------"
-#		nvidia-smi
-#		./gauss $j
-#		sleep 10
-#	done
-#done
-
-#nvidia-smi
-#./gauss 32

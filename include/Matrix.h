@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef MATRIX_H
+#define MATRIX_H
 
 #include <complex>
 #include <vector>
@@ -87,3 +89,5 @@ protected:
 	complex<double> m_trace;
 
 };
+
+#endif MATRIX_H

@@ -1,5 +1,5 @@
 
-#include "QuantumCircuit.h"
+#include "../include/QuantumCircuit.h"
 
 #include <iostream>
 #include <ctype.h>

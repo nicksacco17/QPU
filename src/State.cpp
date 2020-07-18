@@ -2,8 +2,8 @@
 #include <iostream>
 #include <assert.h>
 #include <cmath>
-#include "State.h"
-#include "Utility.h"
+#include "../include/State.h"
+#include "../include/Utility.h"
 
 #include <algorithm>
 #include <functional>

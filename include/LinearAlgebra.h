@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef LINEAR_ALGEBRA_H
+#define LINEAR_ALGEBRA_H
 
 #include "State.h"
 #include "Operator.h"
@@ -87,3 +89,5 @@ const Operator STANDARD_TO_BELL_BASIS({	{ INV_SQRT2, 0, 0, INV_SQRT2 },
 										{ 0, INV_SQRT2, INV_SQRT2, 0 },
 										{ 0, INV_SQRT2, -1.0 * INV_SQRT2, 0 } });
 										*/
+
+#endif // LINEAR_ALGEBRA_H

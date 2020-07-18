@@ -1,6 +1,6 @@
 
-#include "LinearAlgebra.h"
-#include "Utility.h"
+#include "../include/LinearAlgebra.h"
+#include "../include/Utility.h"
 #include <assert.h>
 
 #include <iostream>

@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef OPERATOR_H
+#define OPERATOR_H
 
 #include <complex>
 #include <vector>
@@ -164,3 +166,4 @@ private:
 
 };
 
+#endif // OPERATOR_H

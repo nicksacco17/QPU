@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef QUANTUM_CIRCUIT_H
+#define QUANTUM_CIRCUIT_H
 
 #include <string>
 #include <initializer_list>
@@ -57,3 +59,4 @@ private:
 	State m_circuit_state;
 };
 
+#endif // QUANTUM_CIRCUIT_H

@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef PAULI_MATRIX_H
+#define PAULI_MATRIX_H
 
 #include "Operator.h"
 
@@ -22,3 +24,5 @@ public:
 private:
 	string m_name;
 };
+
+#endif // PAULI_MATRIX_H

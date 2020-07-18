@@ -4,13 +4,13 @@
 #include <ctime>
 #include <random>
 
-#include "TestDrivers.h"
-#include "Operator.h"
-#include "State.h"
-#include "Pauli_Matrix.h"
-#include "LinearAlgebra.h"
-#include "Gate.h"
-#include "QuantumCircuit.h"
+#include "../include/TestDrivers.h"
+#include "../include/Operator.h"
+#include "../include/State.h"
+#include "../include/Pauli_Matrix.h"
+#include "../include/LinearAlgebra.h"
+#include "../include/Gate.h"
+#include "../include/QuantumCircuit.h"
 
 #include <vector>
 #include <complex>
