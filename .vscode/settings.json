@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "complex": "cpp",
+        "vector": "cpp"
+    },
+    "C_Cpp.default.includePath": ["$workspaceFolder}/include"]
+}

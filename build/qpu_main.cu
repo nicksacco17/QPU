@@ -26,6 +26,15 @@ using std::endl;
 
 int main(int argc, char*argv[])
 {
+	#if (defined(__CUDA_ARCH__) && (__CUDA_ARCH__ > 0))
+		cout << "RUNNING ON GPU" << endl;
+	#else
+		cout << "RUNNING ON CPU" << endl;
+	#endif
+
+
+
+
 	std::chrono::steady_clock::time_point total_start_time = std::chrono::steady_clock::now();
 
 	unsigned int STATE_SIZE = 0;
