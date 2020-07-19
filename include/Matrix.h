@@ -19,7 +19,7 @@ public:
 
 	Matrix(const vector<vector<complex<double>>>& in_mat);
 
-	Matrix(vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col);
+	Matrix(const vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col);
 
 	~Matrix();
 
@@ -130,13 +130,15 @@ private:
 
 	void i_update_internal();
 	void i_calc_trace();
-	void i_cac_determinant();
+	void i_calc_determinant();
 
 	vector<complex<double>> m_eigenvalues;
 	
 protected:
 
 	unsigned int RC_TO_INDEX(unsigned int row, unsigned int col) const;
+
+	void calc_eigenvalues();
 
 	unsigned int m_num_row;
 	unsigned int m_num_col;

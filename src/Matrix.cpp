@@ -7,9 +7,11 @@
 #include <functional>
 #include <chrono>
 
+#ifdef USE_GPU
 #include <cuda_runtime.h>
 #include <cusolverDn.h>
 #include <cuComplex.h>
+#endif
 
 using std::cout;
 using std::endl;
@@ -48,7 +50,7 @@ Matrix::Matrix(unsigned int in_row, unsigned int in_col)
 	m_trace = 9999;
 }
 
-Matrix::Matrix(vector<vector<complex<double>>>& in_mat)
+Matrix::Matrix(const vector<vector<complex<double>>>& in_mat)
 {
 	m_num_row = in_mat.size();
 	m_num_col = in_mat.at(0).size();
@@ -68,7 +70,7 @@ Matrix::Matrix(vector<vector<complex<double>>>& in_mat)
 	//m_cache.update_eig_flag = true;
 }
 
-Matrix::Matrix(vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col)
+Matrix::Matrix(const vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col)
 {
 	m_mat = in_vec;
 
@@ -448,7 +450,7 @@ void Matrix::clear()
 	m_mat = vector<complex<double>>(m_num_row * m_num_col, 0.0);
 }
 
-unsigned int Matrix::RC_TO_INDEX(unsigned int row, unsigned int col)
+unsigned int Matrix::RC_TO_INDEX(unsigned int row, unsigned int col) const
 {
 	return ((row * m_num_col) + col);
 }
