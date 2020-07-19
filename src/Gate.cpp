@@ -25,7 +25,6 @@ Gate::~Gate()
 
 }
 
-
 Gate1Q::Gate1Q(string gate_type)
 {
 	m_dim_x = 2;
@@ -73,11 +72,11 @@ Gate1Q::Gate1Q(string gate_type)
 	}
 	else if (gate_type == "T")
 	{
-		m_trace = (1.0 + std::exp(1i * PI / 4.0));
-		m_determinant = (1.0 + std::exp(1i * PI / 4.0));
+		m_trace = (1.0 + std::exp((0,  PI / 4.0)));
+		m_determinant = (1.0 + std::exp((0, PI / 4.0)));
 		m_name = "T (PI/8)";
 		
-		m_matrix = { {1, 0}, {0,  std::exp(1i * PI / 4.0)} };
+		m_matrix = { {1, 0}, {0,  std::exp((0, PI / 4.0))} };
 	}
 	else if (gate_type == "SQRT-NOT")
 	{
@@ -116,7 +115,7 @@ Gate1Q::Gate1Q(string gate_type, complex<double> phase_arg)
 		m_determinant = 9999;
 		m_name = "Rotation";
 
-		m_matrix = { {1, 0}, {0, std::exp(1i * phase_arg)} };
+		m_matrix = { {1, 0}, {0, std::exp((0, phase_arg))} };
 	}
 	else
 	{

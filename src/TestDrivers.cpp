@@ -13,7 +13,7 @@ using std::vector;
 using std::complex;
 
 #define NUM_QUBITS 3
-#define STATE_SIZE unsigned int(std::pow(2, NUM_QUBITS))
+#define STATE_SIZE (unsigned int)(std::pow(2, NUM_QUBITS))
 
 void state_test_driver()
 {

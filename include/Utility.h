@@ -5,6 +5,12 @@
 #include <fstream>
 #include <complex>
 
+struct mat_coord_t
+{
+	unsigned int row;
+	unsigned int col;
+};
+
 // Is Zero for printing purposes (i.e. maybe just less than 1e-5, just to het general shape and fit on screen)
 bool iszero_print(const std::complex<double>& z);
 
@@ -25,11 +31,5 @@ std::complex<double> sign(const std::complex<double>& z);
 
 const double PI = std::atan(1.0) * 4;
 const double INV_SQRT2 = (1.0 / std::sqrt(2));
-
-struct mat_coord_t
-{
-	unsigned int row;
-	unsigned int col;
-};
 
 #endif //UTILITY_H

@@ -8,7 +8,7 @@
 #SBATCH -t 04:00:00 # 1 hour
 
 # q == number of qubits in system (2 --> 20)
-for ((q=2; q<=20; q++))
+for ((q=2; q<=15; q++))
 do
 	nvidia-smi
 	./qpu $q
