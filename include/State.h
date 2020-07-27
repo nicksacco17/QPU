@@ -48,6 +48,9 @@ public:
 	// State (full) w/contents and size N
 	State(vector<complex<double>> in_vector);
 
+	// State (full) w/contents and size N
+	State(vector<complex<double>> in_vector, unsigned int in_size);
+
 	// Copy Constructor
 	State(const State& psi);
 

@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <complex>
+#include <math.h>
 
 struct mat_coord_t
 {
@@ -28,6 +29,10 @@ bool iszero(const std::complex<double>& z);
 std::ostream& operator<<(std::ostream& os, const mat_coord_t& coord_pair);
 
 std::complex<double> sign(const std::complex<double>& z);
+
+unsigned int RC_TO_INDEX(unsigned int row, unsigned int col, unsigned int stride);
+
+unsigned int POW_2(unsigned int x);
 
 const double PI = std::atan(1.0) * 4;
 const double INV_SQRT2 = (1.0 / std::sqrt(2));

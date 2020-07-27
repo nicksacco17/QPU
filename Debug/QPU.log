@@ -1,0 +1,42 @@
+﻿  Operator.cpp
+D:\QPU\src\Operator.cpp(98,64): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(98,64): warning C4244:         with
+D:\QPU\src\Operator.cpp(98,64): warning C4244:         [
+D:\QPU\src\Operator.cpp(98,64): warning C4244:             _Ty=int
+D:\QPU\src\Operator.cpp(98,64): warning C4244:         ]
+D:\QPU\src\Operator.cpp(98,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(98,51): warning C4244:         with
+D:\QPU\src\Operator.cpp(98,51): warning C4244:         [
+D:\QPU\src\Operator.cpp(98,51): warning C4244:             _Ty=int
+D:\QPU\src\Operator.cpp(98,51): warning C4244:         ]
+D:\QPU\src\Operator.cpp(126,67): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(126,67): warning C4244:         with
+D:\QPU\src\Operator.cpp(126,67): warning C4244:         [
+D:\QPU\src\Operator.cpp(126,67): warning C4244:             _Ty=float
+D:\QPU\src\Operator.cpp(126,67): warning C4244:         ]
+D:\QPU\src\Operator.cpp(126,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(126,54): warning C4244:         with
+D:\QPU\src\Operator.cpp(126,54): warning C4244:         [
+D:\QPU\src\Operator.cpp(126,54): warning C4244:             _Ty=float
+D:\QPU\src\Operator.cpp(126,54): warning C4244:         ]
+D:\QPU\src\Operator.cpp(183,64): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(183,64): warning C4244:         with
+D:\QPU\src\Operator.cpp(183,64): warning C4244:         [
+D:\QPU\src\Operator.cpp(183,64): warning C4244:             _Ty=int
+D:\QPU\src\Operator.cpp(183,64): warning C4244:         ]
+D:\QPU\src\Operator.cpp(183,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(183,51): warning C4244:         with
+D:\QPU\src\Operator.cpp(183,51): warning C4244:         [
+D:\QPU\src\Operator.cpp(183,51): warning C4244:             _Ty=int
+D:\QPU\src\Operator.cpp(183,51): warning C4244:         ]
+D:\QPU\src\Operator.cpp(212,67): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(212,67): warning C4244:         with
+D:\QPU\src\Operator.cpp(212,67): warning C4244:         [
+D:\QPU\src\Operator.cpp(212,67): warning C4244:             _Ty=float
+D:\QPU\src\Operator.cpp(212,67): warning C4244:         ]
+D:\QPU\src\Operator.cpp(212,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+D:\QPU\src\Operator.cpp(212,54): warning C4244:         with
+D:\QPU\src\Operator.cpp(212,54): warning C4244:         [
+D:\QPU\src\Operator.cpp(212,54): warning C4244:             _Ty=float
+D:\QPU\src\Operator.cpp(212,54): warning C4244:         ]
+  QPU.vcxproj -> D:\QPU\Debug\QPU.exe

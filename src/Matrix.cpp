@@ -111,7 +111,7 @@ bool Matrix::operator==(const Matrix& mat)
 {
 	if (this->m_num_row == mat.m_num_row && this->m_num_col == mat.m_num_col)
 	{
-		for (int i = 0; i < this->m_mat.size(); i++)
+		for (unsigned int i = 0; i < this->m_mat.size(); i++)
 		{
 			if (this->m_mat.at(i) != mat.m_mat.at(i))
 			{
@@ -136,7 +136,14 @@ bool Matrix::operator!=(const Matrix& mat)
 // Scalar Addition (A += B)
 Matrix& Matrix::operator+=(const Matrix& mat)					
 {
+
+#ifdef USE_GPU
+	cout << "GPU MATRIX ADDITION..." << endl;
+#else
 	std::transform(this->m_mat.begin(), this->m_mat.end(), mat.m_mat.begin(), this->m_mat.begin(), std::plus<complex<double>>());
+#endif
+
+	return *this;
 }
 
 // Scalar Addition (C = A + B)
@@ -151,7 +158,14 @@ const Matrix Matrix::operator+(const Matrix& mat) const
 // Scalar Subtraction (A -= B)
 Matrix& Matrix::operator-=(const Matrix& mat)					
 {
+
+#ifdef USE_GPU
+	cout << "GPU MATRIX SUBTRACTION..." << endl;
+#else
 	std::transform(this->m_mat.begin(), this->m_mat.end(), mat.m_mat.begin(), this->m_mat.begin(), std::minus<complex<double>>());
+#endif
+
+	return *this;
 }
 
 // Scalar Subtraction (C = A - B)
@@ -166,7 +180,28 @@ const Matrix Matrix::operator-(const Matrix& mat) const
 // Scalar Multiplication (A *= a)
 Matrix& Matrix::operator*=(const complex<double> alpha)			
 {
+
+#ifdef USE_GPU
+
+	cout << "GPU SCALAR MULTIPLICATION..." << endl;
+	cudaError_t CUDA_STATUS;
+	cublasStatus_t CUBLAS_STATUS;
+	cublasHandle_t CUDA_HANDLE;
+
+	cuDoubleComplex* d_MAT = NULL;
+
+	CUDA_STATUS = cudaMalloc((void**) &d_MAT, sizeof(complex<double>) * m_mat.size());
+	CUDA_HANDLE = cublasCreate(&CUDA_HANDLE);
+
+	CUDA_STATUS = cudaMemcpy(d_MAT, COL_MAT.data(), sizeof(complex<double>) * (m_num_row * m_num_col), cudaMemcpyHostToDevice);
+
+	CUBLAS_STATUS = cublasZscal(CUDA_HANDLE, m_mat.size(), &alpha, m_mat.data(), 1);
+
+#else
 	std::transform(this->m_mat.begin(), this->m_mat.end(), this->m_mat.begin(), std::bind1st(std::multiplies<complex<double>>(), alpha));
+#endif
+
+	return *this;
 }
 
 // Scalar Multiplication (B = A * a)
@@ -181,10 +216,17 @@ const Matrix Matrix::operator*(const complex<double> alpha) const
 // Scalar Division (A *= 1/a)
 Matrix& Matrix::operator/=(const complex<double> alpha)
 {
+
+#ifdef USE_GPU
+	cout << "GPU SCALAR DIVISION..." << endl;
+#else
 	if (std::real(alpha) > 1e-10 && std::imag(alpha) > 1e-10)
 	{
 		std::transform(this->m_mat.begin(), this->m_mat.end(), this->m_mat.begin(), std::bind1st(std::multiplies<complex<double>>(), (1.0 / alpha)));
 	}
+#endif
+
+	return *this;
 }
 
 // Scalar Division (B = A * 1/a)
@@ -199,6 +241,10 @@ const Matrix Matrix::operator/(const complex<double> a) const
 // Matrix Multiplication (A *= B)
 Matrix& Matrix::operator*=(const Matrix& mat)					
 {
+
+#ifdef USE_GPU
+	cout << "MATRIX MULTIPLICATION THROUGH GPU" << endl;
+#else
 	if (this != &mat && this->m_num_col == mat.m_num_row)
 	{
 		unsigned int NUM_ELEMENTS = this->m_num_row * mat.m_num_col;
@@ -207,11 +253,12 @@ Matrix& Matrix::operator*=(const Matrix& mat)
 
 		for (unsigned int i = 0; i < this->m_num_row; i++)
 		{
+			//cout << "ROW: " << i << endl;
 			for (unsigned int k = 0; k < COMMON_DIM; k++)
 			{
 				for (unsigned int j = 0; j < mat.m_num_col; j++)
 				{
-					NEW_MAT.at(RC_TO_INDEX(i, j)) += (this->m_mat.at(RC_TO_INDEX(i, k)) * mat.m_mat.at(RC_TO_INDEX(k, j)));
+					NEW_MAT.at(RC_TO_INDEX(i, j, m_num_col)) += (this->m_mat.at(RC_TO_INDEX(i, k, m_num_col)) * mat.m_mat.at(RC_TO_INDEX(k, j, m_num_col)));
 				}
 			}
 		}
@@ -220,6 +267,8 @@ Matrix& Matrix::operator*=(const Matrix& mat)
 		this->m_num_row = this->m_num_row;
 		this->m_num_col = mat.m_num_col;
 	}
+#endif
+
 	return *this;
 }
 
@@ -236,22 +285,22 @@ const Matrix Matrix::operator*(const Matrix& mat) const
 
 /* ************************** ACCESSORS & MUTATORS ************************** */
 
-complex<double> Matrix::get_element(unsigned int row, unsigned int col)
+complex<double> Matrix::get_element(unsigned int row, unsigned int col) const
 {
-	return m_mat.at(RC_TO_INDEX(row, col));
+	return m_mat.at(RC_TO_INDEX(row, col, m_num_col));
 }
 
 void Matrix::set_element(unsigned int row, unsigned int col, complex<double> in_value)
 {
-	m_mat.at(RC_TO_INDEX(row, col)) = in_value;
+	m_mat.at(RC_TO_INDEX(row, col, m_num_col)) = in_value;
 }
 
-unsigned int Matrix::get_num_rows()
+unsigned int Matrix::get_num_rows() const
 {
 	return m_num_row;
 }
 
-unsigned int Matrix::get_num_cols()
+unsigned int Matrix::get_num_cols() const
 {
 	return m_num_col;
 }
@@ -266,12 +315,12 @@ void Matrix::set_dims(unsigned int in_row, unsigned int in_col)
 	m_mat = vector<complex<double>>(m_num_row * m_num_col, 0.0);
 }
 
-vector<complex<double>> Matrix::get_row_order_mat()
+vector<complex<double>> Matrix::get_row_order_mat() const
 {
 	return m_mat;
 }
 
-vector<complex<double>> Matrix::get_col_order_mat()
+vector<complex<double>> Matrix::get_col_order_mat() const
 {
 	vector<complex<double>> COL_MAT;
 
@@ -281,7 +330,7 @@ vector<complex<double>> Matrix::get_col_order_mat()
 		// Get all the elements in the row
 		for (unsigned int i = 0; i < m_num_row; i++)
 		{
-			COL_MAT.push_back(m_mat.at(RC_TO_INDEX(i, j)));
+			COL_MAT.push_back(m_mat.at(RC_TO_INDEX(i, j, m_num_col)));
 		}
 	}
 
@@ -290,22 +339,85 @@ vector<complex<double>> Matrix::get_col_order_mat()
 
 vector<vector<complex<double>>> Matrix::get_matrix()
 {
-
+	return { {1, 0}, {1, 2} };
 }
 
 void Matrix::set_matrix(vector<vector<complex<double>>>& in_mat)
 {
+	m_num_row = in_mat.size();
+	m_num_col = in_mat.at(0).size();
 
+	m_dim = (m_num_row == m_num_col) ? m_num_row : -1;
+
+	for (unsigned int i = 0; i < in_mat.size(); i++)
+	{
+		m_mat.insert(m_mat.end(), in_mat.at(i).begin(), in_mat.at(i).end());
+	}
+
+	m_determinant = 9999;
+	m_trace = 9999;
 }
 
 void Matrix::set_matrix(vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col)
 {
+	m_mat = in_vec;
+	m_num_row = in_row;
+	m_num_col = in_col;
+}
 
+Matrix Matrix::get_submatrix(unsigned int row1, unsigned int row2, unsigned int col1, unsigned int col2)
+{
+	Matrix SUB_MAT;
+
+	unsigned int NUM_ROWS = (row2 - row1) + 1;
+	unsigned int NUM_COLS = (col2 - col1) + 1;
+
+	vector<complex<double>> sub_mat_elements;
+
+	for (unsigned int i = row1; i <= row2; i++)
+	{
+		for (unsigned int j = col1; j <= col2; j++)
+		{
+			sub_mat_elements.push_back(this->m_mat[RC_TO_INDEX(i, j, m_num_col)]);
+		}
+	}
+
+	SUB_MAT.set_matrix(sub_mat_elements, NUM_ROWS, NUM_COLS);
+	return SUB_MAT;
+}
+
+void Matrix::set_submatrix(unsigned int row1, unsigned int row2, unsigned int col1, unsigned int col2, const Matrix& submatrix)
+{
+	unsigned int COL_STRIDE = submatrix.m_num_col;
+
+	//cout << RC_TO_INDEX()
+
+	for (unsigned int i = row1; i <= row2; i++)
+	{
+		for (unsigned int j = col1; j <= col2; j++)
+		{
+			//cout << "(i, j) = (" << i - row1 << ", " << j - col1 << ") = " << submatrix.m_mat.at(RC_TO_INDEX(i - row1, j - col1)) << endl;
+			this->m_mat.at(RC_TO_INDEX(i, j, m_num_col)) = submatrix.m_mat.at(RC_TO_INDEX(i - row1, j - col1, submatrix.m_num_col));
+		}
+	}
 }
 
 /* ************************************************************************** */
 
 /* ******************************* FUNCTIONS ******************************** */
+
+void Matrix::createIdentityMatrix()
+{
+	m_mat = vector<complex<double>>(m_num_row * m_num_col, 0.0);
+
+	if (m_num_row == m_num_col)
+	{
+		for (unsigned int k = 0; k < m_num_row; k++)
+		{
+			m_mat.at(RC_TO_INDEX(k, k, m_num_col)) = 1;
+		}
+	}
+}
 
 void Matrix::transpose()
 {
@@ -321,9 +433,9 @@ void Matrix::transpose()
 		{
 			for (unsigned int col = row + 1; col < m_num_col; col++)
 			{
-				TEMP = m_mat.at(RC_TO_INDEX(row, col));
-				m_mat.at(RC_TO_INDEX(row, col)) = m_mat.at(RC_TO_INDEX(col, row));
-				m_mat.at(RC_TO_INDEX(col, row)) = TEMP;
+				TEMP = m_mat.at(RC_TO_INDEX(row, col, m_num_col));
+				m_mat.at(RC_TO_INDEX(row, col, m_num_col)) = m_mat.at(RC_TO_INDEX(col, row, m_num_col));
+				m_mat.at(RC_TO_INDEX(col, row, m_num_col)) = TEMP;
 			}
 		}
 	}
@@ -337,7 +449,7 @@ void Matrix::transpose()
 		{
 			for (unsigned int col = 0; col < m_num_col; col++)
 			{
-				NEW_MAT.at(RC_TO_INDEX(col, row)) = m_mat.at(RC_TO_INDEX(row, col));
+				NEW_MAT.at(RC_TO_INDEX(col, row, new_num_col)) = m_mat.at(RC_TO_INDEX(row, col, m_num_col));
 			}
 		}
 		m_mat = NEW_MAT;
@@ -411,7 +523,8 @@ void Matrix::print() const
 		cout << "| ";
 		for (unsigned int j = 0; j < m_num_col; j++)
 		{
-			cout << m_mat.at(RC_TO_INDEX(i, j)) << " ";
+			cout << "(i, j) = (" << i << ", " << j << ") = " << RC_TO_INDEX(i, j, m_num_col) << endl;
+			cout << m_mat.at(RC_TO_INDEX(i, j, m_num_col)) << " ";
 		}
 		cout << "|" << endl;
 	}
@@ -426,7 +539,7 @@ void Matrix::print_shape() const
 		cout << "| ";
 		for (unsigned int j = 0; j < m_num_col; j++)
 		{
-			if (iszero_print(m_mat.at(RC_TO_INDEX(i, j))))
+			if (iszero_print(m_mat.at(RC_TO_INDEX(i, j, m_num_col))))
 			{
 				cout << "0 ";
 			}
@@ -450,13 +563,11 @@ void Matrix::clear()
 	m_mat = vector<complex<double>>(m_num_row * m_num_col, 0.0);
 }
 
-unsigned int Matrix::RC_TO_INDEX(unsigned int row, unsigned int col) const
-{
-	return ((row * m_num_col) + col);
-}
-
 /* ************************************************************************** */
 
+
+// CUDA EIGENVALUES
+#ifdef USEGPU
 void Matrix::calc_eigenvalues()
 {
 	// CUDA STATUS, HANDLE, ERROR
@@ -625,3 +736,4 @@ void Matrix::calc_eigenvalues()
 
 	return;
 }
+#endif

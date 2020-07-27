@@ -46,6 +46,13 @@ State::State(vector<complex<double>> in_vector)
 	i_calc_magnitude();
 }
 
+// State (full) w/contents and size N
+State::State(vector<complex<double>> in_vector, unsigned int in_size)
+{
+	m_vector = in_vector;
+	m_dim = in_size;
+}
+
 // Copy Constructor
 State::State(const State& psi)
 {
@@ -282,6 +289,7 @@ void State::i_calc_magnitude()
 void State::populate(const vector<complex<double>>& in_vector)
 {
 	m_vector = in_vector;
+	m_dim = m_vector.size();
 	i_calc_magnitude();
 }
 
@@ -359,7 +367,7 @@ void State::measure()
 
 		cdf[0] = std::norm(m_vector[0]);
 
-		for (int i = 1; i < m_dim; i++)
+		for (unsigned int i = 1; i < m_dim; i++)
 		{
 			cdf[i] = std::norm(m_vector[i]) + cdf[i - 1];
 		}
@@ -378,7 +386,7 @@ void State::measure()
 		}
 		else
 		{
-			for (int j = 1; j < m_dim; j++)
+			for (unsigned int j = 1; j < m_dim; j++)
 			{
 				if ((cdf[j - 1] < gen_num && gen_num <= cdf[j]))
 				{
@@ -389,7 +397,7 @@ void State::measure()
 		index_count[selected_index]++;
 	}
 
-	for (int i = 0; i < m_dim; i++)
+	for (unsigned int i = 0; i < m_dim; i++)
 	{
 		cout << "INDEX: " << i << " PROB = " << ((double)(index_count[i]) / NUM_TEST) << endl;
 	}
@@ -412,7 +420,7 @@ void entangle(State& entangled_state, State& psi_0, State& psi_1)
 	
 	vector<complex<double>> entangled_state_elements(entangled_state_dim, 0.0);
 
-	for (int i = 0; i < DIM_PSI1; i++)
+	for (unsigned int i = 0; i < DIM_PSI1; i++)
 	{
 		std::transform(psi_0.get_start_address(), psi_0.get_end_address(), entangled_state_elements.begin() + (DIM_PSI0 * i), std::bind1st(std::multiplies<complex<double>>(), psi_1.get_element(i)));
 	}

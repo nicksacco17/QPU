@@ -68,3 +68,13 @@ std::ostream& operator<<(std::ostream& os, const mat_coord_t& coord_pair)
 
 	return os;
 }
+
+unsigned int RC_TO_INDEX(unsigned int row, unsigned int col, unsigned int stride)
+{
+	return ((row * stride) + col);
+}
+
+unsigned int POW_2(unsigned int x)
+{
+	return std::pow(2, x);
+}

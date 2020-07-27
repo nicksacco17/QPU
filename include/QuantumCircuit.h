@@ -8,6 +8,7 @@
 
 #include "State.h"
 #include "Operator.h"
+#include "Gate.h"
 
 using std::string;
 using std::initializer_list;
@@ -41,18 +42,22 @@ public:
 
 	void initialize(initializer_list<unsigned int> qubits, const string& state_type);
 
-	State evolve();
+	void evolve();
+
+	void sort_levels();
 
 private:
 
 	// Number of qubits in the circuit
 	unsigned int m_num_qubits;
 
+	unsigned int m_functional_size;
+
 	// Gates in the circuit at a particular level
 
 	// <GATE_INDEX, GATE_TYPE, QUBITS>
 
-	vector<GateLevel> m_circuit_levels;
+	vector<vector<GateLevel>> m_circuit_levels;
 	
 	Operator m_circuit_operator;
 

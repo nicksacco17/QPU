@@ -6,6 +6,23 @@
 #include "Operator.h"
 #include <complex>
 
+// Working
+void inner_product(complex<double>& result, const State& psi_l, const State& psi_r);
+
+void inner_product_w_operator(complex<double>& result, const State& psi_l, const Operator& A, const State& psi_r);
+
+// Working
+void outer_product(Operator& result, const State& psi_l, const State& psi_r);
+
+// Working
+void tensor_product(State& result, const State& psi_1, const State& psi_2);
+
+void tensor_product(Operator& result, const Operator& A, const Operator& B);
+
+void op_RHS(State& result, const Operator& A, const State& psi);
+
+
+#ifdef USE_GPU
 using std::complex;
 
 // These definitely should be in this library because they rely on two different objects
@@ -78,7 +95,7 @@ void tensor_product(State& result, const State& psi_1, const State& psi_2);
 
 // A ** B
 void tensor_product(Operator& result, const Operator& A, const Operator& B);
-
+#endif
 /*const Operator BELL_TO_STANDARD_BASIS({	{ INV_SQRT2, INV_SQRT2, 0, 0 },
 										{ 0, 0, INV_SQRT2, INV_SQRT2 },
 										{ 0, 0, INV_SQRT2, -1.0 * INV_SQRT2 },

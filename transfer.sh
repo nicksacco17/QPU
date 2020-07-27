@@ -11,11 +11,11 @@ if [ "$SRC" == "PC" ] &&  [ "$DST" == "SC" ]; then
 
     echo "Transferring Host to Supercloud..."
     # Transfer include folder
-    scp ${PC_HOME}"include/*.h" ${SC_HOME}"include/"
+    scp -r ${PC_HOME}"include/" ${SC_HOME}
     # Transfer source folder
-    scp ${PC_HOME}"src/*.cpp" ${SC_HOME}"src/"
+    scp -r ${PC_HOME}"src/" ${SC_HOME}
     # Transfer build folder
-    scp ${PC_HOME}"build/*.cpp" ${PC_HOME}"build/Makefile" ${PC_HOME}"build/*.cu" ${PC_HOME}"build/*.sh" ${SC_HOME}"build/"
+    scp -r ${PC_HOME}"build/" ${SC_HOME}
 
 # Transfer files Supercloud --> Host
 elif [ "$SRC" == "SC" ] &&  [ "$DST" == "PC" ]; then

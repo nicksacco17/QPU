@@ -17,6 +17,172 @@ using std::endl;
 using std::vector;
 using std::complex;
 
+void inner_product(complex<double>& result, const State& psi_l, const State& psi_r)
+{
+
+#ifdef USE_GPU
+	
+	cout << "GPU INNER PRODUCT..." << endl;
+
+#else
+
+	cout << "CPU INNER PRODUCT..." << endl;
+
+	if (psi_l.get_dim() == psi_r.get_dim())
+	{
+		unsigned int DIM = psi_l.get_dim();
+		complex<double> l_inner_product = 0.0;
+
+		for (unsigned int i = 0; i < DIM; i++)
+		{
+			l_inner_product += (std::conj(psi_l.get_element(i)) * psi_r.get_element(i));
+		}
+
+		result = l_inner_product;
+	}
+
+#endif
+
+	return;
+}
+
+void inner_product_w_operator(complex<double>& result, const State& psi_l, const Operator& A, const State& psi_r)
+{
+
+#ifdef USE_GPU
+	
+	cout << "GPU INNER PRODUCT W/OPERATOR..." << endl;
+
+#else
+
+	cout << "CPU INNER PRODUCT W/OPERATOR..." << endl;
+
+#endif
+
+	return;
+}
+
+void outer_product(Operator& result, const State& psi_l, const State& psi_r)
+{
+
+#ifdef USE_GPU
+	
+	cout << "GPU OUTER PRODUCT..." << endl;
+
+#else
+	
+	cout << "CPU OUTER PRODUCT..." << endl;
+
+	unsigned int L_DIM = psi_l.get_dim();
+	unsigned int R_DIM = psi_r.get_dim();
+
+	Operator TEMP(L_DIM, R_DIM);
+
+	for (unsigned int i = 0; i < L_DIM; i++)
+	{
+		for (unsigned int j = 0; j < R_DIM; j++)
+		{
+			TEMP.set_element(i, j, psi_l.get_element(i) * std::conj(psi_r.get_element(j)));
+		}
+	}
+	result = TEMP;
+
+#endif
+
+	return;
+}
+
+void tensor_product(State& result, const State& psi_1, const State& psi_2)
+{
+
+#ifdef USE_GPU
+	
+	cout << "GPU STATE TENSOR PRODUCT..." << endl;
+
+#else
+	
+	cout << "CPU STATE TENSOR PRODUCT..." << endl;
+
+	unsigned int DIM_PSI1 = psi_1.get_dim();
+	unsigned int DIM_PSI2 = psi_2.get_dim();
+	unsigned int TENSOR_DIM = DIM_PSI1 * DIM_PSI2;
+
+	vector<complex<double>> tensor_elements(TENSOR_DIM, 0.0);
+
+	for (unsigned int i = 0; i < DIM_PSI2; i++)
+	{
+		std::transform(psi_2.get_start_address(), psi_2.get_end_address(), tensor_elements.begin() + (DIM_PSI2 * i), std::bind1st(std::multiplies<complex<double>>(), psi_1.get_element(i)));
+	}
+
+	result.populate(tensor_elements);
+
+#endif
+
+	return;
+}
+
+void tensor_product(Operator& result, const Operator& A, const Operator& B)
+{
+
+#ifdef USE_GPU
+	
+	cout << "GPU OPERATOR TENSOR PRODUCT..." << endl;
+
+#else
+	
+	//cout << "CPU OPERATOR TENSOR PRODUCT..." << endl;
+
+	unsigned int A_NUM_ROW = A.get_num_rows();
+	unsigned int A_NUM_COL = A.get_num_cols();
+	unsigned int B_NUM_ROW = B.get_num_rows();
+	unsigned int B_NUM_COL = B.get_num_cols();
+
+	unsigned int row_stride = B_NUM_ROW - 1;
+	unsigned int col_stride = B_NUM_COL - 1;
+
+	unsigned int T_NUM_ROW = A_NUM_ROW * B_NUM_ROW;
+	unsigned int T_NUM_COL = A_NUM_COL * B_NUM_COL;
+
+	//unsigned int row_start = 0;
+	//unsigned int col_start = 0;
+
+	result.set_dims(T_NUM_ROW, T_NUM_COL);
+
+	for (unsigned int i = 0; i < A_NUM_ROW; i++)
+	{
+		//cout << "[ROW] = [" << i << "]" << endl;
+		//row_start = A_DIM_Y * i;
+		for (unsigned int j = 0; j < A_NUM_COL; j++)
+		{
+			//col_start = A_DIM_X * j;
+
+			result.set_submatrix(B_NUM_COL * i, (B_NUM_COL * i) + col_stride, B_NUM_ROW * j, (B_NUM_ROW * j) + row_stride, (B * A.get_element(i, j)));
+			//result.set_submatrix(row_start, row_start + v_stride, col_start, col_start + h_stride, (A * B.get_element(i, j)).get_matrix());
+		}
+	}
+
+#endif
+
+	return;
+}
+
+void op_RHS(State& result, const Operator& A, const State& psi)
+{
+
+#ifdef USE_GPU
+	
+	cout << "GPU OP RHS PRODUCT..." << endl;
+
+#else
+	
+	cout << "CPU OP RHS PRODUCT..." << endl;
+
+#endif
+
+	return;
+}
+
+#ifdef USE_GPU
 #define QR_ALG_ERROR 1e-20
 #define QR_ALG_MAX_IT 10000
 
@@ -992,4 +1158,5 @@ void Strassen_matrix_multiplication(Operator& C, Operator& A, Operator& B)
 
 
 }
+#endif
 

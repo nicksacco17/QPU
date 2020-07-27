@@ -27,15 +27,17 @@ public:
 
 	Operator(const vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col);
 
-	Operator(string mat_type, unsigned int in_dim);
+	Operator(string mat_type, unsigned int in_dim, double lower_range, double upper_range, long unsigned int seed);
 
 	~Operator();
+
+	Operator& operator=(const Matrix& mat);
+
+	Operator get_submatrix(unsigned int row1, unsigned int row2, unsigned int col1, unsigned int col2);
 
 	/* ********************************************************************** */
 
 	/* ****************************** UTILITY ******************************* */
-
-	void createIdentityMatrix();
 
 	void print() const;
 

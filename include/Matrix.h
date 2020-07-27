@@ -70,19 +70,19 @@ public:
 
 	/* *********************** ACCESSORS & MUTATORS ************************* */
 
-	complex<double> get_element(unsigned int row, unsigned int col);
+	complex<double> get_element(unsigned int row, unsigned int col) const;
 
 	void set_element(unsigned int row, unsigned int col, complex<double> in_value);
 
-	unsigned int get_num_rows();
+	unsigned int get_num_rows() const;
 
-	unsigned int get_num_cols();
+	unsigned int get_num_cols() const;
 
 	void set_dims(unsigned int in_row, unsigned int in_col);
 
-	vector<complex<double>> get_row_order_mat();
+	vector<complex<double>> get_row_order_mat() const;
 
-	vector<complex<double>> get_col_order_mat();
+	vector<complex<double>> get_col_order_mat() const;
 
 	vector<vector<complex<double>>> get_matrix();
 
@@ -90,9 +90,15 @@ public:
 
 	void set_matrix(vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col);
 
+	Matrix get_submatrix(unsigned int row1, unsigned int row2, unsigned int col1, unsigned int col2);
+
+	void set_submatrix(unsigned int row1, unsigned int row2, unsigned int col1, unsigned int col2, const Matrix& submatrix);
+
 	/* ********************************************************************** */
 	
 	/* ***************************** FUNCTIONS ****************************** */
+
+	void createIdentityMatrix();
 
 	void transpose();
 
@@ -135,8 +141,6 @@ private:
 	vector<complex<double>> m_eigenvalues;
 	
 protected:
-
-	unsigned int RC_TO_INDEX(unsigned int row, unsigned int col) const;
 
 	void calc_eigenvalues();
 

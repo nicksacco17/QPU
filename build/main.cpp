@@ -18,6 +18,7 @@
 #include <math.h>
 #include <chrono>
 #include <fstream>
+#include <limits>
 
 using std::cout;
 using std::endl;
@@ -450,6 +451,7 @@ void mat_file_gen()
 
 }
 
+#ifdef USE_GPU
 void outer_product_test()
 {
 	std::default_random_engine test_generator;
@@ -495,6 +497,7 @@ void outer_product_test()
 	cout << "TOTAL TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(inner_product_stop_time - outer_product_start_time).count() << " ms" << std::endl;
 	
 }
+
 
 void hessenberg_test()
 {
@@ -574,6 +577,7 @@ void hessenberg_test()
 	}
 
 }
+
 
 void submatrix_test()
 {
@@ -1103,6 +1107,152 @@ int main()
 
 	cout << "TOTAL TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
 	//E.print();
+
+
+	return 0;
+}
+#endif
+
+int main()
+{
+	vector<complex<double>> psi_state = { 1, 0, 0, 0 };
+
+	State PSI_INIT(8);
+
+	/*QuantumCircuit m_circuit(7);
+
+	m_circuit.add_gate(1, "H", { 0 });
+
+	m_circuit.add_gate(0, "X", { 2 });
+
+	m_circuit.add_gate(1, "X", { 1 });
+
+	m_circuit.add_gate(0, "CNOT", { 0, 1 });
+
+	m_circuit.add_gate(2, "H", { 2 });
+
+	m_circuit.add_gate(2, "CNOT", { 1, 0 });
+
+	m_circuit.add_gate(3, "Y", { 2 });
+	m_circuit.add_gate(3, "R", { 0 });
+	m_circuit.add_gate(3, "H", { 1 });
+
+	m_circuit.add_gate(4, "SWAP", {0, 2});
+	m_circuit.add_gate(4, "SWAP", { 1, 4 });
+	m_circuit.add_gate(4, "H", { 3 });
+
+	m_circuit.add_gate(5, "CNOT", { 0, 2 });
+	m_circuit.add_gate(5, "CNOT", { 1, 4 });
+	m_circuit.add_gate(5, "H", { 3 });
+	m_circuit.add_gate(5, "CNOT", { 5, 6 });
+	
+	//m_circuit.print();
+
+	m_circuit.display();
+
+	m_circuit.sort_levels();
+
+	m_circuit.print();
+
+	m_circuit.evolve();
+
+	//m_circuit.print();
+
+	//m_circuit.sort_levels();
+
+	//m_circuit.print();
+
+	*/
+
+	QuantumCircuit m_circuit(3);
+
+	m_circuit.add_gate(0, "CNOT", { 0, 1 });
+	m_circuit.add_gate(1, "H", { 0 });
+
+	m_circuit.display();
+
+	m_circuit.evolve();
+
+	m_circuit.print();
+
+
+	//State PSI_A({1, 2}, 2);
+	//State PSI_B({3, 4}, 2);
+
+	//Operator A({ {1, 2}, {3, 4} });
+	//Operator B({ {5, 6}, {7, 8} });
+
+	//Operator C({ {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16} });
+	//Operator D(4, 4);
+
+	//Operator C_SUB = C.get_submatrix(0, 1, 0, 1);
+
+	//A.print();
+	//B.print();
+
+	//C.print();
+	//C_SUB.print();
+
+	//D.set_submatrix(0, 1, 0, 1, C_SUB);
+
+	//D.print();
+
+	//PSI_A.print();
+	//PSI_B.print();
+
+	//complex<double> dot_product = 0.0;
+	//State T;
+	//Operator OP;
+	//Operator TP;
+
+	//inner_product(dot_product, PSI_A, PSI_B);
+
+	//tensor_product(T, PSI_A, PSI_B);
+
+	//outer_product(OP, PSI_A, PSI_B);
+
+	//tensor_product(TP, A, C);
+
+	//T.print();
+	//OP.print();
+
+	//TP.print();
+
+	//cout << dot_product << endl;
+
+
+
+	/*
+	cout << "COMPILED ON CPU!" << endl;
+
+	std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+	Operator A("C-D", 1024, -100, 100, 1);
+	Operator B("C-D", 1024, -100, 100, 2);
+	std::chrono::steady_clock::time_point stop_time = std::chrono::steady_clock::now();
+	cout << "GEN TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
+	//Operator C("R-I", 2, 0, 5, 3);
+	Operator C;
+
+	Operator D(2, 2);
+
+	//D = C;
+
+	cout << "BEGIN ADDITION" << endl;
+	start_time = std::chrono::steady_clock::now();
+
+	C = (A * B);
+	stop_time = std::chrono::steady_clock::now();
+	cout << "ADD TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
+	*/
+
+	//A += B;
+
+	//C = (A + B);
+
+	//A.print();
+
+	//C.print();
+	//D.print();
 
 
 	return 0;
