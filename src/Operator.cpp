@@ -73,9 +73,9 @@ Operator::Operator(const vector<complex<double>>& in_vec, unsigned int in_row, u
 	*/
 }
 
-Operator::Operator(string mat_type, unsigned int in_dim, double lower_range, double upper_range, long unsigned int seed)
+Operator::Operator(string mat_type, unsigned int in_dim, double lower_range, double upper_range, long unsigned int seed) : Matrix(in_dim, in_dim)
 {
-#ifdef USE_GPU
+#ifdef bhjsfhsdf
 	cout << "I AM ON THE GPU" << endl;
 #else
 	m_dim = in_dim;

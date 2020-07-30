@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <ctime>
@@ -41,53 +40,39 @@ void test()
 {
 	/*
 	std::default_random_engine test_generator;
-
 	std::uniform_int_distribution<int> distribution(0, 100);
 	std::uniform_int_distribution<int> boolean_dist(0, 2);
-
-
 	//vector<vector<complex<double>>> mat_2d_sq(MAT_SIZE, vector<complex<double>>(MAT_SIZE, 0.0));
 	vector<vector<complex<double>>> mat_2d_sq = { {6, 5, 0}, {5, 1, 4}, {0, 4, 3} };
 	vector<vector<complex<double>>> mat_2d_complex = { {6i, 5i, 0}, {5i, 1i, 4i}, {0, 4i, 3i} };
 	vector<vector<complex<double>>> mat_2d_test = { {2, 3, 1, 0.5, 4}, {4, 5, 7, 0.1, 1}, {5, 3, 6, 19.2, 9}, {1, 4, 1, 4, 7}, {3, 1, 6, 2, 6} };
-
 	vector<vector<complex<double>>> mat1_2d_rand(MAT_SIZE, vector<complex<double>>(MAT_SIZE, 0.0));
 	vector<vector<complex<double>>> mat2_2d_rand(MAT_SIZE, vector<complex<double>>(MAT_SIZE, 0.0));
-
 	vector<complex<double>> vec1_1d(MAT_SIZE, 0);
 	vector<complex<double>> vec2_1d(MAT_SIZE, 0);
-
 	vector<vector<complex<double>>> mat1_2d = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
-
 	vector<vector<complex<double>>> mat2_2d = { {10, 11, 12}, {13, 14, 15}, {16, 17, 18} };
-
 	for (int row = 0; row < MAT_SIZE; row++)
 	{
 		for (int col = 0; col < MAT_SIZE; col++)
 		{
 			int prob = boolean_dist(test_generator);
-
 			//if (prob >= 1)
 			//{
 			//	mat_2d_rand.at(row).at(col) = 0.0;
 			//}
-
 			//else
 			//{
 			mat1_2d_rand.at(row).at(col) = distribution(test_generator);
 			mat2_2d_rand.at(row).at(col) = distribution(test_generator);
 			//}
-
-
 		}
 	}
-
 	for (int i = 0; i < MAT_SIZE; i++)
 	{
 		vec1_1d.at(i) = distribution(test_generator);
 		vec2_1d.at(i) = distribution(test_generator);
 	}
-
 	int k = 0;
 	for (int i = 0; i < MAT_SIZE; i++)
 	{
@@ -97,7 +82,6 @@ void test()
 			k++;
 		}
 	}
-
 	for (int i = 0; i < MAT_SIZE; i++)
 	{
 		for (int j = 0; j < MAT_SIZE; j++)
@@ -105,8 +89,7 @@ void test()
 			cout << std::setw(2) << std::setfill('0') << mat_2d_sq.at(i).at(j);
 		}
 		cout << endl;
-	} 
-
+	}
 	Operator A(mat1_2d_rand);
 	Operator Q(MAT_SIZE, MAT_SIZE);
 	Operator R(MAT_SIZE, MAT_SIZE);
@@ -114,168 +97,98 @@ void test()
 	Operator A_D(MAT_SIZE, MAT_SIZE);
 	Operator A_EIG_VEC(MAT_SIZE, MAT_SIZE);
 	Operator A_EIG_VAL(MAT_SIZE, MAT_SIZE);
-
 	Pauli_Matrix sigma_x("Y");
-
 	//A.print();
 	//system("PAUSE");
-
 	//time_t start_time = time(NULL);
 	std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 	cout << "MATRIX MULTIPLICATION" << endl;
-
 	Operator mat1(mat1_2d_rand);
 	Operator mat2(mat2_2d_rand);
 	Operator res_mat = mat1 * mat2;
-
 	cout << "SIZE: " << res_mat.get_dim_x() << endl;
-
 	std::chrono::steady_clock::time_point stop_time = std::chrono::steady_clock::now();
 	std::cout << "TOTAL TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
-
 	//QR_Algorithm(A, A_EIG_VAL);
 	//time_t stop_time = time(NULL);
-
-
 	//A_EIG_VAL.print();
-
 	//time_t total_time = stop_time - start_time;
 	//cout << "TOTAL TIME " << total_time << " SEC" << endl;
-
-
 	//A.print();
 	//system("PAUSE");
-
 	//State psi1(vec1_1d);
 	//State psi2(vec2_1d);
-
 	//psi1.print();
 	//psi2.print();
-
-
-
 	//mat1.print();
 	//system("PAUSE");
-
 	//mat2.print();
 	//system("PAUSE");
-
 	//time_t start_time = time(NULL);
-
-
-
 	//time_t stop_time = time(NULL);
-
-
-
 	//time_t total_time = stop_time - start_time;
 	//cout << "TOTAL TIME " << total_time << " SEC" << endl;
 	//complex<double> calc = inner_product(psi1, psi2);
-
 	//A.transpose();
 	//cout << "BEGIN QR ALGORITHM FOR EIGENVALUE DECOMPOSITION" << endl;
 	//QR_Algorithm(A, A_EIG_VAL);
 	//QR_decomposition(A, Q, R);
 	//QR_decomposition(A_D, A_EIG_VEC, A_EIG_VAL);
-
-
 	//A.print();
-
-
 	//cout << calc << endl;
-
 	//Operator B(mat1_2d);
 	//Operator C(mat2_2d);
-
 	//Operator D = B * C;
-
 	//D.print();
-
-
-
 	//A_EIG_VAL.print();
 	//R.print();
-
-
-
 	//A_EIG_VEC.print();
 	//A_EIG_VAL.print();
-
 	//State result_psi = op_rhs(A, eig_vec_a1);
-
 	//result_psi.print();
-
 	//Operator A1(mat_2d_sq);
 	//Operator Q(MAT_SIZE, MAT_SIZE);
-
 	//A.print();
 	//Hessenberg_reduction(A, Q);
 	//Q.print();
-
 	//Operator QT(3, 3);
 	//Operator R(3, 3);
 	//Operator HESS(3, 3);
-
 	//QR_decomposition(A1, Q, R);
-
 	//QT = Q;
 	//QT.transpose();
-
 	//A1.print();
 	//Q.print();
 	//QT.print();
 	//R.print();
-
 	//HESS = QT * A * Q;
-
 	//HESS.print();
-
-
-
 	//QR_Algorithm(sigma_x);
-
-
-
-
 	//A1.transpose();
-
 	//A1.print();
-
 	//Operator Q(3, 3);
 	//Operator R(3, 3);
-
 	//A.print();
-
 	//QR_decomposition(A1, Q, R);
-
 	//R.print();
 	//Q.print();
-
 	//Operator A = Q * R;
-
 	//A.print();
-
 	cout << "ORIGINAL MATRIX A1" << endl;
 	A1.print();
-
 	cout << "APPLY GIVENS ROTATION TO ELEMENT (1, 0)" << endl;
 	vector<vector<complex<double>>> g1_mat = Givens_rotation(A1.get_dim_x(), A1.get_dim_y(), 1, 0, A1.get_element(0, 0), A1.get_element(1, 0));
-
 	Operator G1(g1_mat);
 	cout << "GIVENS ROTATION G1" << endl;
 	G1.print();
-
 	cout << "MATRIX MULTIPLICATION: A2 = G1 * A1" << endl;
 	Operator A2 = G1 * A1;
 	A2.print();
-
 	cout << "APPLY GIVENS ROTATION TO ELEMENT (2, 1)" << endl;
 	vector<vector<complex<double>>> g2_mat = Givens_rotation(A2.get_dim_x(), A2.get_dim_y(), 2, 1, A2.get_element(1, 1), A2.get_element(2, 1));
-
 	Operator G2(g2_mat);
 	cout << "GIVENS ROTATION G2" << endl;
 	G2.print();
-
 	cout << "MATRIX MULTIPLICATION: A3 = G2 * A2" << endl;
 	Operator A3 = G2 * A2;
 	A3.print(); */
@@ -324,32 +237,32 @@ void matmult()
 	for (unsigned int i = 0; i < N; i++)
 	{
 		for (unsigned int k = 0; k < N; k++)
-		//for (unsigned int j = 0; j < N; j++)
+			//for (unsigned int j = 0; j < N; j++)
 		{
 			//sum = 0.0;
 			for (unsigned int j = 0; j < N; j++)
-			//for (unsigned int k = 0; k < N; k++)
+				//for (unsigned int k = 0; k < N; k++)
 			{
 				//A_index = (i * N + k);
 				//B_index = (j + k * N);
-				
+
 				mat3[(i << n) + j] += (mat1[(i << n) + k] * mat2[j + (k << n)]);
-				
+
 				//if (i % 5 == 0 && j % 5 == 0 && k % 5 == 0)
 					//cout << "(i, j, k) = (" << i << ", " << j << ", " << k << ")" << endl;
-				
+
 				//sum += 
 				//sum += (mat1[i * N + k] * mat2[j + k * N]);
 				//sum += (mat1[A_index] * mat2[B_index]);
 			}
 			//C_index = (i * N + j);
 			//mat3[C_index] = sum;
-			
+
 		}
 	}
 	std::chrono::steady_clock::time_point stop_time = std::chrono::steady_clock::now();
 	std::cout << "TOTAL TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
-	
+
 
 	cout << "C = " << endl;
 	for (unsigned int i = 0; i < mat3.size(); i++)
@@ -415,8 +328,8 @@ void mat_file_gen()
 
 	std::string file_path = "C:\\Users\\nicks\\Documents\\MAT_TESTS\\";
 	std::string file_name = "MAT_";
-	
-	
+
+
 	for (int i = 2; i <= NUM_QUBITS; i++)
 	{
 		for (int counter = 500; counter < 2001; counter++)
@@ -444,10 +357,10 @@ void mat_file_gen()
 			//outfile.close();
 		}
 	}
-	
 
 
-	
+
+
 
 }
 
@@ -483,7 +396,7 @@ void outer_product_test()
 	std::chrono::steady_clock::time_point outer_product_stop_time = std::chrono::steady_clock::now();
 
 	cout << "---> CALCULATION COMPLETE\n" << endl;
-	
+
 	cout << "---> CALCULATING INNER PRODUCT" << endl;
 
 	std::chrono::steady_clock::time_point inner_product_start_time = std::chrono::steady_clock::now();
@@ -491,11 +404,11 @@ void outer_product_test()
 	std::chrono::steady_clock::time_point inner_product_stop_time = std::chrono::steady_clock::now();
 
 	cout << "---> CALCULATION COMPLETE\n" << endl;
-		
+
 	cout << "OUTER PRODUCT TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(outer_product_stop_time - outer_product_start_time).count() << " ms" << std::endl;
 	cout << "INNER PRODUCT TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(inner_product_stop_time - inner_product_start_time).count() << " ms" << std::endl;
 	cout << "TOTAL TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(inner_product_stop_time - outer_product_start_time).count() << " ms" << std::endl;
-	
+
 }
 
 
@@ -643,16 +556,11 @@ void submatrix_test()
 	Gate1Q SQRTNOT("SQRT-NOT");
 	Gate1Q I2("I");
 	Gate1Q Rotation("R", PI / 5);
-
 	State psi0({ 1.0/std::sqrt(2), 1.0/std::sqrt(2) });
-
 	psi0.print();
 	Rotation.print();
 	State psi1 = op_rhs(Rotation, psi0);
-
 	psi1.print();
-
-
 }*/
 
 void tensor_product_test()
@@ -678,7 +586,7 @@ void tensor_product_test()
 	Operator MAT1(mat1_fixed);
 	Operator MAT2(mat2_fixed);
 	Operator MAT_TP;// (4096, 4096);
-	
+
 	MAT1.print();
 	system("PAUSE");
 	MAT2.print();
@@ -711,7 +619,7 @@ void entangle_test()
 	{
 		vec1_rand[i] = distribution(test_generator);
 		vec2_rand[i] = distribution(test_generator);
-		
+
 	}
 
 	vector<complex<double>> in_vec = { 0.7, 0.3 };
@@ -751,8 +659,8 @@ void bell_state_test()
 void measure_test()
 {
 	//vector<complex<double>> psi_vec = { 1.0 / 3, 2.0 / 3, 1.0 / 3, 1.0 / 3, 1.0 / 3, 1.0 / 3 };
-	
-	vector<complex<double>> psi_vec = { 1.0 / 5, 3.0 / 5, 2.0 / 5, 2.0/ 5, 2.0 / 5, 1.0 / 5, 1.0 / 5, 1.0 / 5};
+
+	vector<complex<double>> psi_vec = { 1.0 / 5, 3.0 / 5, 2.0 / 5, 2.0 / 5, 2.0 / 5, 1.0 / 5, 1.0 / 5, 1.0 / 5 };
 	State psi(psi_vec);
 
 	psi.print();
@@ -767,85 +675,60 @@ void change_basis_bell_to_standard()
 	//vector<complex<double>> vec_phi_minus_bs = { 0, 1, 0, 0 };
 	//vector<complex<double>> vec_psi_plus_bs = { 0, 0, 1, 0 };
 	//vector<complex<double>> vec_psi_minus_bs = { 0, 0, 0, 1 };
-
 	vector<complex<double>> vec_phi_plus_bs = { INV_SQRT2, INV_SQRT2, 0, 0 };
 	vector<complex<double>> vec_phi_minus_bs = { 0, 0, INV_SQRT2, INV_SQRT2 };
 	vector<complex<double>> vec_psi_plus_bs = { 0, 0, INV_SQRT2 , -1.0 * INV_SQRT2 };
 	vector<complex<double>> vec_psi_minus_bs = { INV_SQRT2, -1.0 * INV_SQRT2, 0, 0 };
-
 	State phi_plus_bs(vec_phi_plus_bs);
 	State phi_minus_bs(vec_phi_minus_bs);
 	State psi_plus_bs(vec_psi_plus_bs);
 	State psi_minus_bs(vec_psi_minus_bs);
-
 	cout << "BELL BASIS REPRESENTATION OF BELL STATES" << endl;
-
 	phi_plus_bs.print();
 	phi_minus_bs.print();
-
 	psi_plus_bs.print();
 	psi_minus_bs.print();
-
 	system("PAUSE");
-
 	cout << "CHANGE OF BASIS MATRIX" << endl;
-
 	BELL_TO_STANDARD_BASIS.print();
-
 	system("PAUSE");
-
 	State phi_plus_e = op_rhs(BELL_TO_STANDARD_BASIS, phi_plus_bs);
 	State phi_minus_e = op_rhs(BELL_TO_STANDARD_BASIS, phi_minus_bs);
 	State psi_plus_e = op_rhs(BELL_TO_STANDARD_BASIS, psi_plus_bs);
 	State psi_minus_e = op_rhs(BELL_TO_STANDARD_BASIS, psi_minus_bs);
-
 	cout << "STANDARD BASIS REPRESENTATION OF BELL STATES" << endl;
-
 	phi_plus_e.print();
 	phi_minus_e.print();
-
 	psi_plus_e.print();
 	psi_minus_e.print();
 }
-
 void change_basis_standard_to_bell()
 {
 	vector<complex<double>> vec_phi_plus_e = { INV_SQRT2, 0, 0, INV_SQRT2 };
 	vector<complex<double>> vec_phi_minus_e = { INV_SQRT2, 0, 0, -1.0 * INV_SQRT2 };
 	vector<complex<double>> vec_psi_plus_e = { 0, INV_SQRT2, INV_SQRT2, 0 };
 	vector<complex<double>> vec_psi_minus_e = { 0, INV_SQRT2, -1.0 * INV_SQRT2, 0 };
-
 	State phi_plus_e(vec_phi_plus_e);
 	State phi_minus_e(vec_phi_minus_e);
 	State psi_plus_e(vec_psi_plus_e);
 	State psi_minus_e(vec_psi_minus_e);
-
 	cout << "STANDARD BASIS REPRESENTATION OF BELL STATES" << endl;
-
 	phi_plus_e.print();
 	phi_minus_e.print();
-
 	psi_plus_e.print();
 	psi_minus_e.print();
-
 	system("PAUSE");
-
 	cout << "CHANGE OF BASIS MATRIX" << endl;
-
 	STANDARD_TO_BELL_BASIS.print();
-	
-	system("PAUSE");
 
+	system("PAUSE");
 	State phi_plus_bs = op_rhs(STANDARD_TO_BELL_BASIS, phi_plus_e);
 	State phi_minus_bs = op_rhs(STANDARD_TO_BELL_BASIS, phi_minus_e);
 	State psi_plus_bs = op_rhs(STANDARD_TO_BELL_BASIS, psi_plus_e);
 	State psi_minus_bs = op_rhs(STANDARD_TO_BELL_BASIS, psi_minus_e);
-
 	cout << "BELL STATE REPRESENTATION OF BELL STATES" << endl;
-
 	phi_plus_bs.print();
 	phi_minus_bs.print();
-
 	psi_plus_bs.print();
 	psi_minus_bs.print();
 }
@@ -878,7 +761,7 @@ void quantum_teleportation_test()
 	Operator LEVEL3(8, 8);
 
 	tensor_product(LEVEL1, CNOT_CA, I_B);
-	
+
 	LEVEL1.print();
 	tensor_product(LEVEL2, H_C, I_AB);
 	//tensor_product(LEVEL3, STANDARD_TO_BELL_BASIS, )
@@ -973,17 +856,17 @@ int main()
 	//outer_product_test();
 
 	//hessenberg_test();
-	
+
 	//submatrix_test();
-	
+
 	//mat_file_gen();
-	
+
 	//gate_test();
 
 	//entangle_test();
 
 	//bell_state_test();
-	
+
 	//tensor_product_test();
 
 	//measure_test();
@@ -1085,7 +968,7 @@ int main()
 
 	DIFF.inverse();
 
-	
+
 
 	cout << "BEING MATRIX INVERSION" << endl;
 	system("PAUSE");
@@ -1120,60 +1003,52 @@ int main()
 	State PSI_INIT(8);
 
 	/*QuantumCircuit m_circuit(7);
-
 	m_circuit.add_gate(1, "H", { 0 });
-
 	m_circuit.add_gate(0, "X", { 2 });
-
 	m_circuit.add_gate(1, "X", { 1 });
-
 	m_circuit.add_gate(0, "CNOT", { 0, 1 });
-
 	m_circuit.add_gate(2, "H", { 2 });
-
 	m_circuit.add_gate(2, "CNOT", { 1, 0 });
-
 	m_circuit.add_gate(3, "Y", { 2 });
 	m_circuit.add_gate(3, "R", { 0 });
 	m_circuit.add_gate(3, "H", { 1 });
-
 	m_circuit.add_gate(4, "SWAP", {0, 2});
 	m_circuit.add_gate(4, "SWAP", { 1, 4 });
 	m_circuit.add_gate(4, "H", { 3 });
-
 	m_circuit.add_gate(5, "CNOT", { 0, 2 });
 	m_circuit.add_gate(5, "CNOT", { 1, 4 });
 	m_circuit.add_gate(5, "H", { 3 });
 	m_circuit.add_gate(5, "CNOT", { 5, 6 });
-	
-	//m_circuit.print();
 
+	//m_circuit.print();
 	m_circuit.display();
-
 	m_circuit.sort_levels();
-
 	m_circuit.print();
-
 	m_circuit.evolve();
-
 	//m_circuit.print();
-
 	//m_circuit.sort_levels();
-
 	//m_circuit.print();
-
 	*/
 
-	QuantumCircuit m_circuit(3);
+	QuantumCircuit m_circuit(10);
 
-	m_circuit.add_gate(0, "CNOT", { 0, 1 });
-	m_circuit.add_gate(1, "H", { 0 });
+	//m_circuit.add_gate(0, "CNOT", { 0, 1 });
+	//m_circuit.add_gate(1, "H", { 0 });
+
+	//m_circuit.display();
+
+	//m_circuit.evolve();
+
+	//m_circuit.print();
+
+	m_circuit.populate_1Q(1);
 
 	m_circuit.display();
 
+	std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 	m_circuit.evolve();
-
-	m_circuit.print();
+	std::chrono::steady_clock::time_point stop_time = std::chrono::steady_clock::now();
+	cout << "EVOLVE TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
 
 
 	//State PSI_A({1, 2}, 2);
@@ -1224,7 +1099,6 @@ int main()
 
 	/*
 	cout << "COMPILED ON CPU!" << endl;
-
 	std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 	Operator A("C-D", 1024, -100, 100, 1);
 	Operator B("C-D", 1024, -100, 100, 2);
@@ -1232,14 +1106,10 @@ int main()
 	cout << "GEN TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
 	//Operator C("R-I", 2, 0, 5, 3);
 	Operator C;
-
 	Operator D(2, 2);
-
 	//D = C;
-
 	cout << "BEGIN ADDITION" << endl;
 	start_time = std::chrono::steady_clock::now();
-
 	C = (A * B);
 	stop_time = std::chrono::steady_clock::now();
 	cout << "ADD TIME = " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count() << " ms" << std::endl;
@@ -1253,7 +1123,6 @@ int main()
 
 	//C.print();
 	//D.print();
-
 
 	return 0;
 }

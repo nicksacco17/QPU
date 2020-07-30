@@ -182,7 +182,7 @@ void op_RHS(State& result, const Operator& A, const State& psi)
 	return;
 }
 
-#ifdef USE_GPU
+#ifdef HAHAHAHA
 #define QR_ALG_ERROR 1e-20
 #define QR_ALG_MAX_IT 10000
 

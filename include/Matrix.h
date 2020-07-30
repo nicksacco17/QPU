@@ -108,9 +108,11 @@ public:
 
 	void inverse();
 
-	vector<complex<double>> get_eigenvalues();
+	void exponential();
 
-	complex<double> get_eigenvalue(unsigned int index);
+	vector<double> get_eigenvalues();
+
+	double get_eigenvalue(unsigned int index);
 
 	vector<vector<complex<double>>> get_eigenvectors();
 
@@ -130,6 +132,8 @@ public:
 
 	void clear();
 
+	void calc_eigenvalues();
+
 	/* ********************************************************************** */
 
 private:
@@ -138,11 +142,11 @@ private:
 	void i_calc_trace();
 	void i_calc_determinant();
 
-	vector<complex<double>> m_eigenvalues;
+	//vector<<complex<double>> m_eigenvalues;
 	
 protected:
 
-	void calc_eigenvalues();
+	//void calc_eigenvalues();
 
 	unsigned int m_num_row;
 	unsigned int m_num_col;
@@ -151,7 +155,10 @@ protected:
 	int m_dim;
 
 	vector<complex<double>> m_mat;
-	vector<vector<complex<double>>> m_eigenvectors;
+	//vector<vector<complex<double>>> m_eigenvectors;
+
+	vector<complex<double>> m_eigenvectors;
+	vector<double> m_eigenvalues;
 
 	complex<double> m_determinant;
 	complex<double> m_trace;

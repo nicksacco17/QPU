@@ -2,11 +2,15 @@
 #include "../include/QuantumCircuit.h"
 
 #include <iostream>
+#include <random>
 #include <ctype.h>
 #include "../include/LinearAlgebra.h"
 
 using std::cout;
 using std::endl;
+
+vector<string> Q1_NAMES = { "H", "X", "Y", "Z", "I", "PHASE", "T", "SQRT-NOT" };// , "R"}
+
 
 QuantumCircuit::QuantumCircuit(unsigned int num_qubits)
 {
@@ -21,6 +25,23 @@ void QuantumCircuit::add_gate(unsigned int level, string gate_type, initializer_
 	m_circuit_levels.at(level).push_back(GateLevel{ level, gate_type, (vector<unsigned int>)qubits });
 	//m_circuit_levels.push_back(GateLevel{level, gate_type, (vector<unsigned int>)qubits});
 	m_functional_size = level + 1;
+}
+
+void QuantumCircuit::populate_1Q(int seed)
+{
+	std::default_random_engine RAND_NUM_GENERATOR{ static_cast<long unsigned int>(seed) };
+	std::uniform_int_distribution<int> distribution(0, Q1_NAMES.size() - 1);
+
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		for (unsigned int j = 0; j < m_num_qubits; j++)
+		{
+			int gate_index = distribution(RAND_NUM_GENERATOR);
+			string gate_name = Q1_NAMES.at(gate_index);
+
+			this->add_gate(i, gate_name, { j });
+		}
+	}
 }
 
 void QuantumCircuit::print()
@@ -54,7 +75,7 @@ void QuantumCircuit::display()
 
 	for (unsigned int i = 0; i < m_num_qubits; i++)
 	{
-		circuit_icons.push_back("-*----*----*----*----*----*----*----*----*----*");
+		circuit_icons.push_back("-*----*----*----*----*----*----*----*----*----*-");
 	}
 
 	for (unsigned int level = 0; level < m_functional_size; level++)
@@ -197,7 +218,7 @@ void QuantumCircuit::display()
 		// If the line is a qubit line, print the contents of the icon vector
 		if (i % 2 == 0)
 		{
-			string qubit_str = "Q[" + std::to_string(i / 2) + "] -----" + circuit_icons.at(i / 2);
+			string qubit_str = "Q[" + std::to_string(i / 2) + "] -----" + circuit_icons.at(i / 2) + "-----";
 			circuit_display.push_back(qubit_str);
 		}
 
@@ -633,6 +654,7 @@ void QuantumCircuit::evolve()
 					}
 					else
 					{
+						cout << "LEVEL: " << i << ", GATE: " << k << endl;
 						tensor_product(NEW_LEVEL_OP, LEVEL_OP, GATE_OP);
 						LEVEL_OP = NEW_LEVEL_OP;
 						//LEVEL_OP.print();
@@ -663,13 +685,14 @@ void QuantumCircuit::evolve()
 
 	for (unsigned int i = 0; i < level_matrix.size(); i++)
 	{
-		level_matrix.at(i).print();
+		cout << "LEVEL: " << i << endl;
+		//level_matrix.at(i).print();
 
 		m_circuit_operator *= level_matrix.at(i);
 
 	}
 
-	m_circuit_operator.print();
+	//m_circuit_operator.print();
 	
 
 	

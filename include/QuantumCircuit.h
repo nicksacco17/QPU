@@ -21,6 +21,8 @@ struct GateLevel
 	vector<unsigned int> qubit_list;
 };
 
+extern vector<string> Q1_NAMES;
+
 class QuantumCircuit
 {
 public:
@@ -31,6 +33,12 @@ public:
 
 	// Print out contents of the circuit in text format
 	void print();
+
+	void populate_1Q(int seed);
+
+	void populate_2Q(int seed);
+
+	void populate_mixed(int seed);
 
 	// Print out contents of the circuit in graphcal format
 	void display();
