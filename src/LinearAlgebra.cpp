@@ -177,10 +177,23 @@ void op_RHS(State& result, const Operator& A, const State& psi)
 	
 	cout << "CPU OP RHS PRODUCT..." << endl;
 
-#endif
+	if (A.get_num_cols() == psi.get_dim())
+	{
+		complex<double> new_element = 0.0;
 
-	return;
+		for (unsigned int i = 0; i < A.get_num_rows(); i++)
+		{
+			new_element = 0.0;
+			for (unsigned int j = 0; j < A.get_num_cols(); j++)
+			{
+				new_element += A.get_element(i, j) * psi.get_element(j);
+			}
+			result.set_element(i, new_element);
+		}
+	}
 }
+
+#endif
 
 #ifdef HAHAHAHA
 #define QR_ALG_ERROR 1e-20

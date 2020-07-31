@@ -34,6 +34,7 @@ class Gate2Q : public Gate
 {
 public:
 
+	Gate2Q();
 	Gate2Q(const string gate_type);
 
 	~Gate2Q();

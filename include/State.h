@@ -98,6 +98,8 @@ public:
 
 	vector<complex<double>> get_vector() const;
 
+	void set_element(int index, complex<double> value);
+
 	// Populate the contents of the state with an array of elements
 	void populate(const vector<complex<double>>& in_vector);
 

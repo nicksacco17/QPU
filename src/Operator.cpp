@@ -17,70 +17,40 @@ using std::string;
 
 Operator::Operator() : Matrix()
 {
-	/*m_num_row = 2;
-	m_num_col = 2;
-	m_trace = 0.0;
-	m_determinant = 0.0;
-
-	m_mat = { {1, 0}, {0, 1} };
-	m_determinant = 1;
-	m_trace = 2;
-
-	m_eigenvalues = {1, 1};
-	m_eigenvectors = {{1, 0}, {0, 1}};
-	*/
+	m_eigenvalues = { 1, 1 };
+	m_eigenvectors = { {1, 0}, {0, 1} };
 }
 
 Operator::Operator(unsigned int in_row, unsigned int in_col) : Matrix(in_row, in_col)
 {
-	/*m_num_row = in_row;
-	m_num_col = in_col;
-
-	m_dim = (m_num_row == m_num_col) ? m_num_row : -1;
-	
-	m_mat = vector<complex<double>>(m_num_row * m_num_col, 0.0);
-
-	m_determinant = 9999;
-	m_trace = 9999;
-	*/
+	m_eigenvalues = vector<double>(m_num_row, 0.0);
+	m_eigenvectors = vector<vector<complex<double>>>(m_num_row, vector<complex<double>>(m_num_col));
 }
 
 Operator::Operator(const vector<vector<complex<double>>>& in_mat) : Matrix(in_mat)
 {
-	//Matrix(in_mat);
-
-	/*m_num_row = in_mat.size();
-	m_num_col = in_mat.at(0).size();
-
-	m_dim = (m_num_row == m_num_col) ? m_num_row : -1;
-
-	for (unsigned int i = 0; i < in_mat.size(); i++)
-	{
-		m_mat.insert(m_mat.end(), in_mat.at(i).begin(), in_mat.at(i).end());
-	}
-
-	m_determinant = 9999;
-	m_trace = 9999;
-	*/
+	m_eigenvalues = vector<double>(m_num_row, 0.0);
+	m_eigenvectors = vector<vector<complex<double>>>(m_num_row, vector<complex<double>>(m_num_col));
 }
 
 Operator::Operator(const vector<complex<double>>& in_vec, unsigned int in_row, unsigned int in_col) : Matrix(in_vec, in_row, in_col)
 {
-	/*m_mat = in_vec;
-
-	m_num_row = in_row;
-	m_num_col = in_col;
-	*/
+	m_eigenvalues = vector<double>(m_num_row, 0.0);
+	m_eigenvectors = vector<vector<complex<double>>>(m_num_row, vector<complex<double>>(m_num_col));
 }
 
-Operator::Operator(string mat_type, unsigned int in_dim, double lower_range, double upper_range, long unsigned int seed) : Matrix(in_dim, in_dim)
+Operator::Operator(string mat_type, unsigned int in_dim, double lower_range, double upper_range, long unsigned int seed)
 {
-#ifdef bhjsfhsdf
+#ifdef USE_GPU
 	cout << "I AM ON THE GPU" << endl;
+	cout << "CUDA RANDOM GENERATION GOES HERE!" << endl;
 #else
 	m_dim = in_dim;
 	m_num_row = m_dim;
 	m_num_col = m_dim;
+
+	m_eigenvalues = vector<double>(m_num_row, 0.0);
+	m_eigenvectors = vector<vector<complex<double>>>(m_num_row, vector<complex<double>>(m_num_col));
 
 	// Reset matrix
 	m_mat = vector<complex<double>>(m_num_row * m_num_col, 0.0);
@@ -291,7 +261,9 @@ Operator::Operator(string mat_type, unsigned int in_dim, double lower_range, dou
 			}
 		}
 	}
+
 #endif
+
 }
 
 Operator::~Operator()
@@ -313,6 +285,26 @@ Operator& Operator::operator=(const Matrix& mat)
 	return *this;
 }
 
+vector<double> Operator::get_eigenvalues()
+{
+	return m_eigenvalues;
+}
+
+double Operator::get_eigenvalue(unsigned int index)
+{
+	return m_eigenvalues.at(index);
+}
+
+vector<vector<complex<double>>> Operator::get_eigenvectors()
+{
+	return m_eigenvectors;
+}
+
+vector<complex<double>> Operator::get_eigenvector(unsigned int index)
+{
+	return m_eigenvectors.at(index);
+}
+
 Operator Operator::get_submatrix(unsigned int row1, unsigned int row2, unsigned int col1, unsigned int col2)
 {
 	Operator SUB_MAT;
@@ -332,6 +324,432 @@ Operator Operator::get_submatrix(unsigned int row1, unsigned int row2, unsigned 
 
 	SUB_MAT.set_matrix(sub_mat_elements, NUM_ROWS, NUM_COLS);
 	return SUB_MAT;
+}
+
+void Matrix::calc_eigenvalues()
+{
+#ifdef USE_GPU
+
+	// CUDA STATUS, HANDLE, ERROR
+	cusolverDnHandle_t cusolverH = NULL;
+	cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
+
+	cudaError_t cudaStat1 = cudaSuccess;
+	cudaError_t cudaStat2 = cudaSuccess;
+	cudaError_t cudaStat3 = cudaSuccess;
+	int* d_info = NULL;
+	int h_info = 0;
+
+	const unsigned int NUM_ROW = m_num_row;
+	const unsigned int NUM_COL = m_num_col;
+
+	//double* EIG_VAL = new double [NUM_ROW];
+
+	//complex<double>* EIG_VEC = new complex<double> [NUM_ROW * NUM_COL];
+
+	cuDoubleComplex* d_MAT = NULL;
+	cuDoubleComplex* d_WORK_MAT = NULL;
+
+	double* d_EIG_VAL = NULL;
+	int NUM_BYTES = 0;
+
+	// STEP 3: CREATE HANDLE
+	cusolver_status = cusolverDnCreate(&cusolverH);
+
+	if (cusolver_status != CUSOLVER_STATUS_SUCCESS)
+	{
+		cout << "[ERROR]: COULD NOT CREATE HANDLE" << endl;
+		return;
+	}
+
+	// STEP 4: DATA ALLOCATION ON DEVICE
+	// WILL COMPARE WITH CREATE VECTOR/MATRIX FROM CUBLAS
+
+	cudaStat1 = cudaMalloc((void**)&d_MAT, sizeof(complex<double>) * (NUM_ROW * NUM_COL));
+	cudaStat2 = cudaMalloc((void**)&d_EIG_VAL, sizeof(double) * NUM_ROW);
+	cudaStat3 = cudaMalloc((void**)&d_info, sizeof(int));
+
+	if (cudaStat1 != cudaSuccess || cudaStat2 != cudaSuccess || cudaStat3 != cudaSuccess)
+	{
+		cout << "[ERROR]: COULD NOT ALLOCATE MEMORY ON DEVICE" << endl;
+		return;
+	}
+
+	// STEP 5: TRANSFER DATA HOST --> DEVICE
+
+	cudaStat1 = cudaMemcpy(d_MAT, this->get_col_order_mat().data(), sizeof(complex<double>) * (NUM_ROW * NUM_COL), cudaMemcpyHostToDevice);
+
+	if (cudaStat1 != cudaSuccess)
+	{
+		cout << "[ERROR]: COULD NOT TRANSFER DATA FROM HOST TO DEVICE" << endl;
+		return;
+	}
+
+	// STEP 6: ALGORITHM CONFIGURATION
+
+	// Mode configuration
+	cusolverEigMode_t jobz = CUSOLVER_EIG_MODE_VECTOR;
+	cublasFillMode_t uplo = CUBLAS_FILL_MODE_LOWER;
+
+	// Calculate extra buffer space for host - THERE LOOKS TO BE A BETTER FUNCTION TO DO THIS THAT ALLOWS FOR MORE SPACE... DEFINITELY NEED TO CHECK IT OUT!
+
+	cusolver_status = cusolverDnZheevd_bufferSize(cusolverH, jobz, uplo, NUM_ROW, d_MAT, NUM_COL, d_EIG_VAL, &NUM_BYTES);
+
+	switch (cusolver_status)
+	{
+	case CUSOLVER_STATUS_NOT_INITIALIZED:
+		cout << "NOT INIT" << endl;
+		break;
+	case CUSOLVER_STATUS_INVALID_VALUE:
+		cout << "INVALID VALUE" << endl;
+		break;
+	case CUSOLVER_STATUS_ARCH_MISMATCH:
+		cout << "ARCH" << endl;
+		break;
+	case CUSOLVER_STATUS_INTERNAL_ERROR:
+		cout << "INTERNAL ERROR" << endl;
+		break;
+	case CUSOLVER_STATUS_SUCCESS:
+		cout << "BUFFER ALLOCATED" << endl;
+		break;
+	default: cout << "?????" << endl;
+	}
+
+	cout << "NUM BYTES: " << NUM_BYTES << endl;
+
+	if (cusolver_status != CUSOLVER_STATUS_SUCCESS)
+	{
+		cout << "[ERROR]: COULD NOT DETERMINE EXTRA BUFFER SPACE ON DEVICE" << endl;
+		return;
+	}
+
+	// STEP 7: ALLOCATE ADDITIONAL WORK SPACE ON THE DEVICE
+
+	cudaStat1 = cudaMalloc((void**)&d_WORK_MAT, sizeof(complex<double>) * NUM_BYTES);
+
+	if (cudaStat1 != cudaSuccess)
+	{
+		cout << "[ERROR]: COULD NOT ALLOCATE ADDITIONAL BUFFER SPACE ON DEVICE" << endl;
+		return;
+	}
+
+	// STEP 8: COMPUTATION
+
+	cusolver_status = cusolverDnZheevd(cusolverH, jobz, uplo, NUM_ROW, d_MAT, NUM_COL, d_EIG_VAL, d_WORK_MAT, NUM_BYTES, d_info);
+
+	// Synchronize GPU work before returning control back to CPU
+	cudaStat1 = cudaDeviceSynchronize();
+
+	if (cusolver_status != CUSOLVER_STATUS_SUCCESS || cudaStat1 != cudaSuccess)
+	{
+		cout << "[ERROR]: COULD NOT PERFORM CALCULATION" << endl;
+		return;
+	}
+
+	// STEP 9: TRANSFER DATA DEVICE --> HOST
+
+	cudaStat1 = cudaMemcpy(m_eigenvalues.data(), d_EIG_VAL, sizeof(double) * NUM_ROW, cudaMemcpyDeviceToHost);
+	cudaStat2 = cudaMemcpy(m_eigenvectors_UNFORMATTED.data(), d_MAT, sizeof(complex<double>) * (NUM_ROW * NUM_COL), cudaMemcpyDeviceToHost);
+	cudaStat3 = cudaMemcpy(&h_info, d_info, sizeof(int), cudaMemcpyDeviceToHost);
+
+	if (cudaStat1 != cudaSuccess)
+	{
+		cout << "STAT 1 ERROR" << endl;
+	}
+
+	if (cudaStat2 != cudaSuccess)
+	{
+		cout << "STAT 2 ERROR" << endl;
+	}
+
+	if (cudaStat3 != cudaSuccess)
+	{
+		cout << "STAT 3 ERROR" << endl;
+	}
+
+	if (h_info != 0 || cudaStat1 != cudaSuccess || cudaStat2 != cudaSuccess || cudaStat3 != cudaSuccess)
+	{
+		cout << "[ERROR]: COULD NOT TRANSFER DATA FROM DEVICE TO HOST" << endl;
+		return;
+	}
+
+	// STEP 10: POST-PROCESSING
+
+	// CHECK TO MAKE SURE THIS ORDERING MAKES SENSE, NOT SURE IF IT DOES - I THINK THIS SHOULD STORE THE EIGENVECTOR IN EACH ENTRY IN THE LIST
+	for (unsigned int i = 0; i < m_num_col; i++)
+	{
+		for (unsigned int j = 0; j < m_num_row; j++)
+		{
+			m_eigenvectors.at(i).at(j) = m_eigenvectors_UNFORMATTED.at(RC_TO_INDEX(i, j, m_num_col));
+		}
+	}
+
+	//printMatrix(NUM_ROW, NUM_COL, EIG_VEC, NUM_COL, "V");
+
+	// STEP 11: MEMORY DEALLOCATION
+	if (d_MAT)
+	{
+		cudaFree(d_MAT);
+	}
+	if (d_WORK_MAT)
+	{
+		cudaFree(d_WORK_MAT);
+	}
+	if (d_EIG_VAL)
+	{
+		cudaFree(d_EIG_VAL);
+	}
+	if (d_info)
+	{
+		cudaFree(d_info);
+	}
+
+	if (cusolverH)
+	{
+		cusolverDnDestroy(cusolverH);
+	}
+
+	cudaDeviceReset();
+
+	return;
+#else
+	cout << "EIGVAL ON CPU..." << endl;
+#endif
+}
+
+// e^A = P^-1 * e*lambda * P
+void Operator::exponential()
+{
+	if (m_num_row == m_num_col)
+	{
+
+#ifdef USE_GPU
+
+		this->calc_eigens();
+
+		Operator MAT_DIAG(m_num_row, m_num_col);
+
+		MAT_DIAG.createIdentityMatrix();
+
+		for (unsigned int k = 0; k < m_num_row; k++)
+		{
+			MAT_DIAG.m_mat.at(RC_TO_INDEX(k, k, m_num_col)) = std::exp(m_eigenvalues.at(k));
+		}
+
+		Operator P(this->get_eigenvectors());
+		P.transpose();
+
+		Operator P_INV;
+		P_INV = P;
+		P_INV.inverse();
+
+		Operator MAT_EXP;
+
+		MAT_EXP = (P * (MAT_DIAG * P_INV));
+
+
+		this->m_mat = MAT_EXP.m_mat;
+
+#else
+		cout << "MATRIX EXPONENTIAL ON CPU..." << endl;
+#endif
+	}
+}
+
+// Adapted from CUDA documentation and Stack Overflow
+void Operator::inverse()
+{
+	if (m_num_row == m_num_col)
+	{
+#ifdef USE_GPU
+
+		// CUDA STATUS, HANDLE, ERROR
+
+		cublasStatus_t CUBLAS_STATUS = CUBLAS_STATUS_SUCCESS;
+		cublasHandle_t CUBLAS_HANDLE = NULL;
+
+		cudaError_t cudaStat1 = cudaSuccess;
+		cudaError_t cudaStat2 = cudaSuccess;
+		cudaError_t cudaStat3 = cudaSuccess;
+
+		unsigned int DIM = m_num_row;
+		unsigned int DIM_SQ = DIM * DIM;
+
+		int* h_info = (int*)malloc(1 * sizeof(int));
+		int* d_info;
+
+		int* d_pivot;
+
+		complex<double>* d_MAT = NULL;
+		complex<double>* d_MAT_INV = NULL;
+		cuDoubleComplex** d_pointers = NULL;
+		cuDoubleComplex** d_pointers_res = NULL;
+
+		// STEP 3: CREATE HANDLE
+		//cusolver_status = cusolverDnCreate(&cusolverH);
+
+		CUBLAS_STATUS = cublasCreate(&CUBLAS_HANDLE);
+
+		if (CUBLAS_STATUS != CUBLAS_STATUS_SUCCESS)
+		{
+			cout << "[ERROR]: COULD NOT CREATE HANDLE" << endl;
+			return;
+		}
+
+		// STEP 4: DATA ALLOCATION ON DEVICE
+		// WILL COMPARE WITH CREATE VECTOR/MATRIX FROM CUBLAS
+
+		cudaStat1 = cudaMalloc((void**)&d_MAT, sizeof(complex<double>) * (DIM * DIM));
+		cudaStat2 = cudaMalloc((void**)&d_MAT_INV, sizeof(complex<double>) * (DIM * DIM));
+		cudaStat3 = cudaMalloc((void**)&d_info, 1 * sizeof(int));
+		cudaStat3 = cudaMalloc((void**)&d_pivot, sizeof(int) * DIM);
+		cudaStat3 = cudaMalloc((void**)&d_pointers, 1 * sizeof(complex<double>*));
+		cudaStat3 = cudaMalloc((void**)&d_pointers_res, 1 * sizeof(complex<double>*));
+
+		if (cudaStat1 != cudaSuccess || cudaStat2 != cudaSuccess || cudaStat3 != cudaSuccess)
+		{
+			cout << "[ERROR]: COULD NOT ALLOCATE MEMORY ON DEVICE" << endl;
+			return;
+		}
+
+		// STEP 5: TRANSFER DATA HOST --> DEVICE
+
+		complex<double>** h_pointers = (complex<double>**)malloc(sizeof(complex<double>*));
+		h_pointers[0] = d_MAT;
+
+		complex<double>** h_pointers_res = (complex<double>**)malloc(sizeof(complex<double>*));
+		h_pointers_res[0] = d_MAT_INV;
+
+		cudaStat1 = cudaMemcpy(d_MAT, this->get_col_order_mat().data(), sizeof(complex<double>) * (DIM * DIM), cudaMemcpyHostToDevice);
+		cudaStat2 = cudaMemcpy(d_pointers, h_pointers, 1 * sizeof(complex<double>*), cudaMemcpyHostToDevice);
+		cudaStat3 = cudaMemcpy(d_pointers_res, h_pointers_res, 1 * sizeof(complex<double>*), cudaMemcpyHostToDevice);
+
+		if (cudaStat1 != cudaSuccess || cudaStat2 != cudaSuccess || cudaStat3 != cudaSuccess)
+		{
+			cout << "[ERROR]: COULD NOT TRANSFER DATA FROM HOST TO DEVICE" << endl;
+			return;
+		}
+
+		// STEP 6: ALGORITHM CONFIGURATION
+
+		// Mode configuration
+		//cusolverEigMode_t jobz = CUSOLVER_EIG_MODE_VECTOR;
+		//cublasFillMode_t uplo = CUBLAS_FILL_MODE_LOWER;
+
+		// Calculate extra buffer space for host
+
+		CUBLAS_STATUS = cublasZgetrfBatched(CUBLAS_HANDLE, DIM, d_pointers, DIM, d_pivot, d_info, 1);
+		//CUBLAS_STATUS = cublasZgetrfBatched(CUBLAS_HANDLE, DIM, (cuDoubleComplex**) &d_MAT, DIM, d_pivot, d_info, 1);
+
+		cudaStat1 = cudaMemcpy(h_info, d_info, sizeof(int), cudaMemcpyDeviceToHost);
+
+		cout << "INFO: " << h_info[0] << endl;
+
+		//cusolver_status = cusolverDnZheevd_bufferSize(cusolverH, jobz, uplo, NUM_ROW, d_A, NUM_COL, d_EIG_VAL, &NUM_BYTES);
+
+		switch (CUBLAS_STATUS)
+		{
+		case CUBLAS_STATUS_NOT_INITIALIZED:
+			cout << "NOT INIT" << endl;
+			break;
+		case CUBLAS_STATUS_INVALID_VALUE:
+			cout << "INVALID VALUE" << endl;
+			break;
+		case CUBLAS_STATUS_ARCH_MISMATCH:
+			cout << "ARCH" << endl;
+			break;
+		case CUBLAS_STATUS_EXECUTION_FAILED:
+			cout << "COULD NOT LAUNCH ON GPU" << endl;
+			break;
+		case CUBLAS_STATUS_SUCCESS:
+			cout << "INVERSE CALCULATED" << endl;
+			break;
+		default: cout << "?????" << endl;
+		}
+
+		if (CUBLAS_STATUS != CUBLAS_STATUS_SUCCESS)
+		{
+			cout << "[ERROR]: BATCH ALGO 1 INCORRECT" << endl;
+			return;
+		}
+
+		CUBLAS_STATUS = cublasZgetriBatched(CUBLAS_HANDLE, DIM, d_pointers, DIM, d_pivot, d_pointers_res, DIM, d_info, 1);
+
+		cudaStat1 = cudaMemcpy(&h_info, &d_info, sizeof(int), cudaMemcpyDeviceToHost);
+
+		cout << "INFO: " << h_info[0] << endl;
+
+		if (CUBLAS_STATUS != CUBLAS_STATUS_SUCCESS)
+		{
+			cout << "[ERROR]: BATCH ALGO 2 INCORRECT" << endl;
+			return;
+		}
+
+		cudaStat1 = cudaDeviceSynchronize();
+
+		if (cudaStat1 != cudaSuccess)
+		{
+			cout << "[ERROR]: COULD NOT SYNCHRONIZE" << endl;
+			return;
+		}
+
+		// STEP 9: TRANSFER DATA DEVICE --> HOST
+
+		cudaStat2 = cudaMemcpy(this->m_mat.data(), d_MAT_INV, sizeof(complex<double>) * (DIM * DIM), cudaMemcpyDeviceToHost);
+		//cudaStat3 = cudaMemcpy(&h_info, &d_info, sizeof(int), cudaMemcpyDeviceToHost);
+
+		//if (cudaStat1 != cudaSuccess)
+		//{
+		//	cout << "STAT 1 ERROR" << endl;
+		//}
+
+		if (cudaStat2 != cudaSuccess)
+		{
+			cout << "STAT 2 ERROR" << endl;
+		}
+
+		//if (cudaStat3 != cudaSuccess)
+		//{
+		//	cout << "STAT 3 ERROR" << endl;
+		//}
+
+		if (h_info[0] != 0 || cudaStat1 != cudaSuccess || cudaStat2 != cudaSuccess)// || cudaStat3 != cudaSuccess)
+		{
+			cout << "[ERROR]: COULD NOT TRANSFER DATA FROM DEVICE TO HOST" << endl;
+			return;
+		}
+
+		// STEP 10: POST-PROCESSING
+
+		//printMatrix(NUM_ROW, NUM_COL, EIG_VEC, NUM_COL, "V");
+
+		this->transpose();
+
+		// STEP 11: MEMORY DEALLOCATION
+		if (d_MAT)
+		{
+			cudaFree(d_MAT);
+		}
+		if (d_MAT_INV)
+		{
+			cudaFree(d_MAT_INV);
+		}
+		if (d_info)
+		{
+			//cudaFree(d_info);
+		}
+		if (CUBLAS_HANDLE)
+		{
+			cublasDestroy(CUBLAS_HANDLE);
+		}
+
+		cudaDeviceReset();
+
+		return;
+#else
+	cout << "INVERSE ON CPU..." << endl;
+#endif
+	}
 }
 
 void Operator::print() const
@@ -356,30 +774,4 @@ void Operator::print() const
 	}
 
 	cout << "\n---------- PRINT OPERATOR ----------" << endl;
-}
-
-void Operator::print_shape() const
-{
-	for (unsigned int i = 0; i < m_num_row; i++)
-	{
-		cout << "| ";
-		for (unsigned int j = 0; j < m_num_col; j++)
-		{
-			if (iszero_print(m_mat.at(RC_TO_INDEX(i, j, m_num_col))))
-			{
-				cout << "0 ";
-			}
-
-			else if (i == j)
-			{
-				cout << "+ ";
-			}
-
-			else
-			{
-				cout << "* ";
-			}
-		}
-		cout << "|" << endl;
-	}
 }

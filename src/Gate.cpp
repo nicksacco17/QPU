@@ -72,19 +72,19 @@ Gate1Q::Gate1Q(const string gate_type)
 
 			m_mat = { 1, 0, 0, 1i };
 			break;
-		case 'T':
-			m_trace = (1.0 + std::exp((0, PI / 4.0)));
-			m_determinant = (1.0 + std::exp((0, PI / 4.0)));
-			m_name = "T (PI/8)";
-
-			m_mat = { 1, 0, 0,  std::exp((0, PI / 4.0)) };
-			break;
 		case 'S':
 			m_trace = (1.0 + 1i);
 			m_determinant = 9999;
 			m_name = "Square Root NOT";
 
 			m_mat = { (0.5) * (1.0 + 1i), (0.5) * (1.0 - 1i), (0.5) * (1.0 - 1i), (0.5) * (1.0 + 1i) };
+			break;
+		case 'T':
+			m_trace = (1.0 + std::exp((0, PI / 4.0)));
+			m_determinant = (1.0 + std::exp((0, PI / 4.0)));
+			m_name = "T (PI/8)";
+
+			m_mat = { 1, 0, 0,  std::exp((0, PI / 4.0)) };
 			break;
 		case '0':
 			m_trace = 9999;
@@ -163,12 +163,12 @@ void Gate1Q::set_gate(const string gate_type)
 
 			m_mat = { 1, 0, 0, 1i };
 			break;
-		case 'T':
-			m_trace = (1.0 + std::exp((0, PI / 4.0)));
-			m_determinant = (1.0 + std::exp((0, PI / 4.0)));
-			m_name = "T (PI/8)";
+		case 'R':
+			m_trace = 9999;
+			m_determinant = 9999;
+			m_name = "Square Root NOT";
 
-			m_mat = { 1, 0, 0,  std::exp((0, PI / 4.0)) };
+			m_mat = { (0.5) * (1.0 + 1i), (0.5) * (1.0 - 1i), (0.5) * (1.0 - 1i), (0.5) * (1.0 + 1i) };
 			break;
 		case 'S':
 			m_trace = (1.0 + 1i);
@@ -177,6 +177,14 @@ void Gate1Q::set_gate(const string gate_type)
 
 			m_mat = { (0.5) * (1.0 + 1i), (0.5) * (1.0 - 1i), (0.5) * (1.0 - 1i), (0.5) * (1.0 + 1i) };
 			break;
+		case 'T':
+			m_trace = (1.0 + std::exp((0, PI / 4.0)));
+			m_determinant = (1.0 + std::exp((0, PI / 4.0)));
+			m_name = "T (PI/8)";
+
+			m_mat = { 1, 0, 0,  std::exp((0, PI / 4.0)) };
+			break;
+
 		case '0':
 			m_trace = 9999;
 			m_determinant = 9999;
@@ -220,11 +228,12 @@ Gate1Q::Gate1Q(const string gate_type, complex<double> phase_arg)
 	m_num_row = 2;
 	m_num_col = 2;
 
-	if (gate_type == "R")
+	if (gate_type[0] == 'R')
 	{
+		string phase_arg_str = "(" + std::to_string(std::real(phase_arg)) + ", " + std::to_string(std::imag(phase_arg)) + "i)";
 		m_trace = 9999;
 		m_determinant = 9999;
-		m_name = "Rotation";
+		m_name = "Rotation-" + phase_arg_str;
 
 		m_mat = { 1, 0, 0, std::exp((0, phase_arg)) };
 	}

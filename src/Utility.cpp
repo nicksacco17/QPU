@@ -2,6 +2,11 @@
 #include "../include/Utility.h"
 
 #include <iomanip>
+#include <iostream>
+#include <math.h>
+
+using std::cout;
+using std::endl;
 
 bool iszero_print(const std::complex<double>& z)
 {
@@ -41,13 +46,10 @@ std::ostream& operator<<(std::ostream& os, const std::complex<double>& z)
 	return os;
 }
 
-
-
-
 // Floating-point zero evaluation
 bool iszero(const std::complex<double>& z)
 {
-	return (std::norm(z) <= 1e-20);
+	return (std::fpclassify(std::real(z)) == FP_ZERO && std::fpclassify(std::imag(z)) == FP_ZERO);
 }
 
 std::complex<double> sign(const std::complex<double>& z)
@@ -77,4 +79,20 @@ unsigned int RC_TO_INDEX(unsigned int row, unsigned int col, unsigned int stride
 unsigned int POW_2(unsigned int x)
 {
 	return std::pow(2, x);
+}
+
+std::string complexDoubleToString(std::complex<double>& z)
+{
+	std::string z_str = "(" + std::to_string(std::real(z)) + ", " + std::to_string(std::imag(z)) + ")";
+
+	return z_str;
+}
+
+std::complex<double> stringToComplexDouble(std::string z_str)
+{
+	double z_real = std::stod(z_str.substr(1, z_str.find_first_of(',') - 1));
+	double z_imag = std::stod(z_str.substr(z_str.find_first_of(' ') + 1, z_str.find_last_of(')') - z_str.find_first_of(' ') - 1));
+
+	std::complex<double> z(z_real, z_imag);
+	return z;
 }

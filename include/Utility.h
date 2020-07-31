@@ -5,6 +5,7 @@
 #include <fstream>
 #include <complex>
 #include <math.h>
+#include <string>
 
 struct mat_coord_t
 {
@@ -36,5 +37,9 @@ unsigned int POW_2(unsigned int x);
 
 const double PI = std::atan(1.0) * 4;
 const double INV_SQRT2 = (1.0 / std::sqrt(2));
+
+std::string complexDoubleToString(std::complex<double>& z);
+
+std::complex<double> stringToComplexDouble(std::string z_str);
 
 #endif //UTILITY_H

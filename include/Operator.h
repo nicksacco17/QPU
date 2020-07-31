@@ -37,6 +37,28 @@ public:
 
 	/* ********************************************************************** */
 
+	/* *********************** ACCESSORS & MUTATORS ************************* */
+
+	vector<double> get_eigenvalues();
+
+	double get_eigenvalue(unsigned int index);
+
+	vector<vector<complex<double>>> get_eigenvectors();
+
+	vector<complex<double>> get_eigenvector(unsigned int index);
+
+	/* ********************************************************************** */
+
+	/* ***************************** FUNCTIONS ****************************** */
+
+	void inverse();
+
+	void exponential();
+
+	void calc_eigens();
+
+	/* ********************************************************************** */
+
 	/* ****************************** UTILITY ******************************* */
 
 	void print() const;
@@ -48,8 +70,11 @@ public:
 protected:
 
 	vector<double> m_eigenvalues;
+	vector<vector<complex<double>>> m_eigenvectors;
 
 private:
+
+	vector<complex<double>> m_eigenvectors_UNFORMATTED;
 
 	void i_calc_determinant();
 	void i_calc_trace();

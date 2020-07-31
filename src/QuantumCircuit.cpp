@@ -9,8 +9,8 @@
 using std::cout;
 using std::endl;
 
-vector<string> Q1_NAMES = { "H", "X", "Y", "Z", "I", "PHASE", "T", "SQRT-NOT" };// , "R"}
-
+vector<string> Q1_NAMES = { "H", "X", "Y", "Z", "I", "PHASE", "R", "T", "SQRT-NOT" };
+string TENSOR_SUBSTR = "-I";
 
 QuantumCircuit::QuantumCircuit(unsigned int num_qubits)
 {
@@ -340,8 +340,6 @@ void QuantumCircuit::sort_levels()
 	}
 }
 
-string TENSOR_SUBSTR = "-I";
-
 void QuantumCircuit::evolve()
 {
 	sort_levels();
@@ -575,8 +573,10 @@ void QuantumCircuit::evolve()
 				char current_char = current_compile_string.at(k);
 				Gate1Q GATE_OP;
 				bool is_gate_char = true;
+
 				unsigned int qubit;
 				string lookup_type;
+				complex<double> phase_arg;
 				
 				//cout << "----------------- CURRENT CHAR: " << current_char << endl;
 				switch (current_char)
@@ -599,12 +599,29 @@ void QuantumCircuit::evolve()
 					case 'P':
 						GATE_OP.set_gate("PHASE");
 						break;
-					case 'T':
-						GATE_OP.set_gate("T");
-						break;
+					case 'R':
+						qubit = (k - 1) / 2;
+
+						lookup_type = m_circuit_levels.at(i).at(qubit).gate_type;
+						phase_arg = stringToComplexDouble(lookup_type);
+
+						// Look through each gate in the level until the target qubit is found
+						for (unsigned int m = 0; m < m_circuit_levels.at(i).size(); m++)
+						{
+							if (m_circuit_levels.at(i).at(m).qubit_list.at(0) == qubit || m_circuit_levels.at(i).at(m).qubit_list.at(1) == qubit)
+							{
+								lookup_type = m_circuit_levels.at(i).at(m).gate_type;
+							}
+						}
+						GATE_OP.set_gate(lookup_type);
+
 					case 'S':
 						GATE_OP.set_gate("SQRT-NOT");
 						break;
+					case 'T':
+						GATE_OP.set_gate("T");
+						break;
+
 					// If U gate, then need to find the corresponding U operation (i.e. controlled X, controlled Y, etc - found in the gate type!
 					case 'U':
 
@@ -655,9 +672,10 @@ void QuantumCircuit::evolve()
 					else
 					{
 						cout << "LEVEL: " << i << ", GATE: " << k << endl;
+
+						// Probably don't need to offload this to GPU...seem to get decent performance here
 						tensor_product(NEW_LEVEL_OP, LEVEL_OP, GATE_OP);
 						LEVEL_OP = NEW_LEVEL_OP;
-						//LEVEL_OP.print();
 					}
 				}
 			}
@@ -683,18 +701,9 @@ void QuantumCircuit::evolve()
 		level_matrix.push_back(TEMP);
 	}
 
+	// This should (and will) definitely be offloaded to the GPU
 	for (unsigned int i = 0; i < level_matrix.size(); i++)
 	{
-		cout << "LEVEL: " << i << endl;
-		//level_matrix.at(i).print();
-
 		m_circuit_operator *= level_matrix.at(i);
-
 	}
-
-	//m_circuit_operator.print();
-	
-
-	
-
 }

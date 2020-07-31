@@ -261,6 +261,11 @@ complex<double> State::get_element(int index) const
 	return m_vector.at(index);
 }
 
+void State::set_element(int index, complex<double> value)
+{
+	m_vector.at(index) = value;
+}
+
 vector<complex<double>> State::get_vector() const
 {
 	return m_vector;

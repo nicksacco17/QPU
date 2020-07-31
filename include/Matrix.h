@@ -106,18 +106,6 @@ public:
 
 	void hermitian_conjugate();
 
-	void inverse();
-
-	void exponential();
-
-	vector<double> get_eigenvalues();
-
-	double get_eigenvalue(unsigned int index);
-
-	vector<vector<complex<double>>> get_eigenvectors();
-
-	vector<complex<double>> get_eigenvector(unsigned int index);
-
 	complex<double> get_determinant() const;
 
 	complex<double> get_trace() const;
@@ -141,12 +129,8 @@ private:
 	void i_update_internal();
 	void i_calc_trace();
 	void i_calc_determinant();
-
-	//vector<<complex<double>> m_eigenvalues;
 	
 protected:
-
-	//void calc_eigenvalues();
 
 	unsigned int m_num_row;
 	unsigned int m_num_col;
@@ -155,22 +139,9 @@ protected:
 	int m_dim;
 
 	vector<complex<double>> m_mat;
-	//vector<vector<complex<double>>> m_eigenvectors;
-
-	vector<complex<double>> m_eigenvectors;
-	vector<double> m_eigenvalues;
 
 	complex<double> m_determinant;
 	complex<double> m_trace;
-
-	//mutable update_cache m_cache;
 };
 
 #endif // MATRIX_H
-
-//struct update_cache
-//{
-	//bool update_trace_flag;
-	//bool update_determinant_flag;
-	//bool update_eig_flag;
-//};
